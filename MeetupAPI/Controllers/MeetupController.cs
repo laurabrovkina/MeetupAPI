@@ -29,10 +29,14 @@ namespace MeetupAPI.Controllers
         }
 
         [HttpGet]
-        [NationalityFilter("German,Russian")]
-        public ActionResult<List<MeetupDetailsDto>> Get()
+        //[NationalityFilter("German,Russian")]
+        [AllowAnonymous]
+        public ActionResult<List<MeetupDetailsDto>> GetAll([FromQuery]string searchPhrase)
         {
-            var meetups = _meetupContext.Meetups.Include(m => m.Location).ToList();
+            var meetups = _meetupContext.Meetups
+                .Include(m => m.Location)
+                .Where(m => searchPhrase == null || (m.Organizer.ToLower().Contains(searchPhrase.ToLower()) || m.Name.Contains(searchPhrase.ToLower())))
+                .ToList();
             var meetupDtos = _mapper.Map<List<MeetupDetailsDto>>(meetups);
 
             return Ok(meetupDtos);
