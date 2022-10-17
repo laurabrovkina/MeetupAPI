@@ -31,15 +31,26 @@ namespace MeetupAPI.Controllers
         [HttpGet]
         //[NationalityFilter("German,Russian")]
         [AllowAnonymous]
-        public ActionResult<List<MeetupDetailsDto>> GetAll([FromQuery]string searchPhrase)
+        public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery]MeetupQuery query)
         {
-            var meetups = _meetupContext.Meetups
+            var baseQuery = _meetupContext.Meetups
                 .Include(m => m.Location)
-                .Where(m => searchPhrase == null || (m.Organizer.ToLower().Contains(searchPhrase.ToLower()) || m.Name.Contains(searchPhrase.ToLower())))
+                .Where(m => query.SearchPhrase == null ||
+                            m.Organizer.ToLower().Contains(query.SearchPhrase.ToLower()) || 
+                            m.Name.Contains(query.SearchPhrase.ToLower()));
+            
+            var meetups = baseQuery
+                .Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
                 .ToList();
+
+            var totalCount = baseQuery.Count();
+            
             var meetupDtos = _mapper.Map<List<MeetupDetailsDto>>(meetups);
 
-            return Ok(meetupDtos);
+            var result = new PagedResult<MeetupDetailsDto>(meetupDtos, totalCount, query.PageNumber, query.PageSize);
+            
+            return Ok(result);
         }
 
         [HttpGet("{name}")]
