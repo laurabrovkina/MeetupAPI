@@ -33,6 +33,11 @@ namespace MeetupAPI.Controllers
         [AllowAnonymous]
         public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery]MeetupQuery query)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
             var baseQuery = _meetupContext.Meetups
                 .Include(m => m.Location)
                 .Where(m => query.SearchPhrase == null ||

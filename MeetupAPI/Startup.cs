@@ -67,6 +67,8 @@ namespace MeetupAPI
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddControllers(opttions => opttions.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
+            services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
+            
             services.AddDbContext<MeetupContext>();
             services.AddScoped<MeetupSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
