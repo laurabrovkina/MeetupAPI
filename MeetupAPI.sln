@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetupAPI", "MeetupAPI\MeetupAPI.csproj", "{303F95B4-2633-41EE-8B8F-6240B3A3A866}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FillUpDatabaseWithNewMeetups", "FillUpDatabaseWithNewMeetups\FillUpDatabaseWithNewMeetups.csproj", "{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{303F95B4-2633-41EE-8B8F-6240B3A3A866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{303F95B4-2633-41EE-8B8F-6240B3A3A866}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{303F95B4-2633-41EE-8B8F-6240B3A3A866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
