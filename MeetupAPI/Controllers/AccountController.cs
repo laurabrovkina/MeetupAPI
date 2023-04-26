@@ -1,10 +1,12 @@
 ﻿using MeetupAPI.Entities;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
+using MeetupAPI.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MeetupAPI.Controllers
 {
@@ -12,14 +14,19 @@ namespace MeetupAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly MeetupContext _meetupContext;
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IRegisterUserService _registerUserService;
 
-        public AccountController(MeetupContext meetupContext, IPasswordHasher<User> passwordHasher, IJwtProvider jwtProvider)
+        public AccountController(MeetupContext meetupContext,
+            IJwtProvider jwtProvider,
+            IRegisterUserService registerUserService,
+            IPasswordHasher<User> passwordHasher)
         {
             _meetupContext = meetupContext;
-            _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
+            _registerUserService = registerUserService;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpPost("login")]
@@ -49,27 +56,9 @@ namespace MeetupAPI.Controllers
         [HttpPost("register")]
         public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var result = _registerUserService.CreateAsync(registerUserDto);
 
-            var newUser = new User
-            {
-                Email = registerUserDto.Email,
-                Nationality = registerUserDto.Nationality,
-                DateOfBirth = registerUserDto.DateOfBirth,
-                PasswordHash = null,
-                RoleId = registerUserDto.RoleId
-            };
-
-            var passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
-            newUser.PasswordHash = passwordHash;
-
-            _meetupContext.Users.Add(newUser);
-            _meetupContext.SaveChanges();
-
-            return Ok();
+            return result.ToOk(result);
         }
     }
 }

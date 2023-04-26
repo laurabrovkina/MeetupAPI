@@ -7,6 +7,7 @@ using MeetupAPI.Entities;
 using MeetupAPI.Filters;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
+using MeetupAPI.Service;
 using MeetupAPI.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -65,11 +66,13 @@ namespace MeetupAPI
             services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
+            //services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
+            services.AddControllers().AddFluentValidation();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
             services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
-            
             services.AddDbContext<MeetupContext>();
+            services.AddSingleton<IRegisterUserService, RegisterUserService>();
+
             services.AddScoped<MeetupSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
             services.AddSwaggerGen(c =>
