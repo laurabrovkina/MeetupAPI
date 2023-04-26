@@ -4,12 +4,12 @@ using System.Diagnostics;
 
 namespace MeetupAPI.Filters
 {
-    public class TimeTrackFIlter : IActionFilter
+    public class TimeTrackFilter : IActionFilter
     {
         private Stopwatch _stopwatch;
-        private readonly ILogger<TimeTrackFIlter> _logger;
+        private readonly ILogger<TimeTrackFilter> _logger;
 
-        public TimeTrackFIlter(ILogger<TimeTrackFIlter> logger)
+        public TimeTrackFilter(ILogger<TimeTrackFilter> logger)
         {
             _logger = logger;
         }

@@ -16,7 +16,7 @@ namespace MeetupAPI.Controllers
 {
     [Route("api/meetup")]
     [Authorize]
-    [ServiceFilter(typeof(TimeTrackFIlter))]
+    [ServiceFilter(typeof(TimeTrackFilter))]
     public class MeetupController : ControllerBase
     {
         private readonly MeetupContext _meetupContext;
