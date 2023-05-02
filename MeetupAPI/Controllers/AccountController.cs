@@ -30,7 +30,7 @@ namespace MeetupAPI.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult Login([FromBody]RegisterUserDto registerUserDto)
+        public ActionResult Login([FromBody] RegisterUserDto registerUserDto)
         {
             var user = _meetupContext.Users
                 .Include(user => user.Role)
@@ -54,7 +54,7 @@ namespace MeetupAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+        public ActionResult Register([FromBody] RegisterUserDto registerUserDto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace MeetupAPI.Controllers
             user.LastName = updateUserDto.LastName;
             user.Nationality = updateUserDto.Nationality;
             user.DateOfBirth = updateUserDto.DateOfBirth;
-            user.RoleId= updateUserDto.RoleId;
+            user.RoleId = updateUserDto.RoleId;
 
             if (updateUserDto.Password is not null
                 && updateUserDto.Password == updateUserDto.ConfirmPassword)
@@ -110,6 +110,26 @@ namespace MeetupAPI.Controllers
             }
 
             _meetupContext.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut("email")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public ActionResult ChangeEmail([FromBody] UserLoginDto userDto)
+        {
+            var user = _meetupContext.Users
+                .FirstOrDefault(x => x.Email == userDto.Email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             return NoContent();
         }
