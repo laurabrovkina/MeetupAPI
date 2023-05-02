@@ -1,6 +1,8 @@
-﻿using MeetupAPI.Entities;
+﻿using MeetupAPI.Authorization;
+using MeetupAPI.Entities;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,17 @@ namespace MeetupAPI.Controllers
         private readonly MeetupContext _meetupContext;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IAuthorizationService _authorizationService;
 
-        public AccountController(MeetupContext meetupContext, IPasswordHasher<User> passwordHasher, IJwtProvider jwtProvider)
+        public AccountController(MeetupContext meetupContext,
+            IPasswordHasher<User> passwordHasher,
+            IJwtProvider jwtProvider,
+            IAuthorizationService authorizationService)
         {
             _meetupContext = meetupContext;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
+            _authorizationService = authorizationService;
         }
 
         [HttpPost("login")]
@@ -70,6 +77,41 @@ namespace MeetupAPI.Controllers
             _meetupContext.SaveChanges();
 
             return Ok();
+        }
+
+        [HttpPut("edit")]
+        [Authorize(Roles = "Admin,Moderator")]
+        public ActionResult Edit([FromBody] UpdateUserDto updateUserDto)
+        {
+            var user = _meetupContext.Users
+                .FirstOrDefault(x => x.Email == updateUserDto.Email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            user.FirstName = updateUserDto.FirstName;
+            user.LastName = updateUserDto.LastName;
+            user.Nationality = updateUserDto.Nationality;
+            user.DateOfBirth = updateUserDto.DateOfBirth;
+            user.RoleId= updateUserDto.RoleId;
+
+            if (updateUserDto.Password is not null
+                && updateUserDto.Password == updateUserDto.ConfirmPassword)
+            {
+                var passwordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
+                user.PasswordHash = passwordHash;
+            }
+
+            _meetupContext.SaveChanges();
+
+            return NoContent();
         }
     }
 }

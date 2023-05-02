@@ -68,6 +68,8 @@ namespace MeetupAPI
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
+            services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
+            services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
             services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
             
             services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
