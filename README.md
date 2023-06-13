@@ -1,6 +1,17 @@
 # MeetupAPI
 * This is a project about add/update/delete meetups API
 * There are several branches on that repo, each one has a small project
+#### Database
+* As an improvement, the script and/or migration should be introduced to add Roles automatically to the database, 
+the SQL query should be run manually for now:
+```
+INSERT INTO 
+[MeetupDb].[dbo].[Roles]
+VALUES ('User'),('Moderator'),('Admin')
+```
+#### Swagger
+* Swagger documentation is set up and could be accessed using url `https://localhost:5001/swagger/index.html`
+* This should be moved to the launching page in future as an improvement
 
 #### Branches
 * `ef-sp-migration` this is an example how to add stored procedures to your EF Migrations
