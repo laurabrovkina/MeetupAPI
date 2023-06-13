@@ -1,19 +1,17 @@
 ﻿using FluentValidation;
 using LanguageExt.Common;
-using MeetupAPI.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace MeetupAPI.Controllers
 {
     public static class ControllerExtensions
     {
-        public static ActionResult ToOk<TResult, TContract>(
-            this Result<TResult> result,TContract contract)
+        public static IActionResult ToOk<TResult>(
+            this Result<TResult> result)
         {
             return result.Match<ActionResult>(obj =>
             {
-                return new OkObjectResult(contract);
+                return new OkObjectResult(result);
             }, exception =>
             {
                 if (exception is ValidationException validationException)

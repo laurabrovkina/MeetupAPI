@@ -2,18 +2,17 @@
 using LanguageExt.Common;
 using MeetupAPI.Entities;
 using MeetupAPI.Models;
-using MeetupAPI.Validators;
 using Microsoft.AspNetCore.Identity;
 
 namespace MeetupAPI.Service
 {
     public class RegisterUserService : IRegisterUserService
     {
-        private readonly RegisterUserValidator _validator;
+        private readonly IValidator<RegisterUserDto> _validator;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly MeetupContext _meetupContext;
 
-        public RegisterUserService(RegisterUserValidator validator,
+        public RegisterUserService(IValidator<RegisterUserDto> validator,
             IPasswordHasher<User> passwordHasher,
             MeetupContext meetupContext)
         {
@@ -28,6 +27,7 @@ namespace MeetupAPI.Service
 
             if (!validatorResult.IsValid)
             {
+                // create an exception but don't throw it
                 var validationException = new ValidationException(validatorResult.Errors);
                 return new Result<User>(validationException);
             }
@@ -47,7 +47,7 @@ namespace MeetupAPI.Service
             _meetupContext.Users.Add(newUser);
             _meetupContext.SaveChanges();
 
-            return new Result<User>(newUser);
+            return newUser;
         }
     }
 }

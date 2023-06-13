@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MeetupAPI.Controllers
 {
@@ -54,11 +53,11 @@ namespace MeetupAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+        public IActionResult Register([FromBody]RegisterUserDto registerUserDto)
         {
             var result = _registerUserService.CreateAsync(registerUserDto);
 
-            return result.ToOk(result);
+            return result.ToOk();
         }
     }
 }
