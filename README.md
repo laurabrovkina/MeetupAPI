@@ -30,3 +30,20 @@ dotnet ef database update
 * `exception-without-throwing` it is another small project (ongoing) where instead of throwing exceptions, 
 we would hadle bad state with ResultType (monadic transformations in C#).
 This is [Original idea](https://www.youtube.com/watch?app=desktop&v=a1ye9eGTB98).
+* `load-testing` branch includes 5 files with tests for API performance written using k6 tool (Grafana Labs):
+
+1. `load_test.js`
+2. `sample_test.js`
+3. `soak_test.js`
+4. `spike_test.js`
+5. `stress_test.js`
+
+There is a [link](https://k6.io/docs/get-started/installation/) how to install k6
+1. Install the tool on your PC
+2. Run the test with providing the file name, e.g.:
+```
+k6 run sample_test.js
+```
+
+The tool has a nice UI, there is a clear picture in a console window:
+![Screenshot of a results after running sample_test.js](Img/k6-screenshot.jpg)
