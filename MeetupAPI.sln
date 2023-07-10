@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetupAPI", "MeetupAPI\Meet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FillUpDatabaseWithNewMeetups", "FillUpDatabaseWithNewMeetups\FillUpDatabaseWithNewMeetups.csproj", "{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApi", "MeetupAPI.MinimalApi\MinimalApi.csproj", "{4948888D-8F1A-458F-818B-E41B112A5CF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8225C7-08B3-4E41-9E53-BBDCEA06CE4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4948888D-8F1A-458F-818B-E41B112A5CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4948888D-8F1A-458F-818B-E41B112A5CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4948888D-8F1A-458F-818B-E41B112A5CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4948888D-8F1A-458F-818B-E41B112A5CF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
