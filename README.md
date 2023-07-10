@@ -47,3 +47,7 @@ k6 run sample_test.js
 
 The tool has a nice UI, there is a clear picture in a console window:
 ![Screenshot of a results after running sample_test.js](Img/k6-screenshot.jpg)
+
+* `minimal-api` - this branch holds implementation of Miniumal API using FastEndpoints
+* The project file could be found in `MeetupAPI.MinimalApi` folder
+* Swagger documentation is set up and could be accessed using url `https://localhost:5000/swagger/index.html`
