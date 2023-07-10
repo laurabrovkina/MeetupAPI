@@ -16,4 +16,10 @@ public class AccountService : IAccountService
     {
         return await _accountRepository.CreateAsync(user);
     }
+
+    public async Task<User?> GetAsync(int id)
+    {
+        var user = await _accountRepository.GetAsync(id);
+        return user;
+    }
 }
