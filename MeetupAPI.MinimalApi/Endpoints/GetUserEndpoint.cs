@@ -8,7 +8,7 @@ using MinimalApi.Services;
 namespace MeetupAPI.MinimalApi.Endpoints;
 
 [HttpGet("api/v2/account/{id:int}"), AllowAnonymous]
-public class GetUserEndpoint : Endpoint<GetUserDtoRequest, RegisterUserDtoResponse>
+public class GetUserEndpoint : Endpoint<GetUserRequest, UserResponse>
 {
     private readonly IAccountService _accountService;
 
@@ -17,7 +17,7 @@ public class GetUserEndpoint : Endpoint<GetUserDtoRequest, RegisterUserDtoRespon
         _accountService = accountService;
     }
 
-    public override async Task HandleAsync(GetUserDtoRequest request, CancellationToken ct)
+    public override async Task HandleAsync(GetUserRequest request, CancellationToken ct)
     {
         var user = await _accountService.GetAsync(request.Id);
 
@@ -26,7 +26,7 @@ public class GetUserEndpoint : Endpoint<GetUserDtoRequest, RegisterUserDtoRespon
             return;
         }
 
-        var userResponse = user?.ToRegisterUserDtoResponse();
+        var userResponse = user?.ToUserResponse();
         await SendOkAsync(userResponse, ct);
     }
 }

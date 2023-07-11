@@ -1,6 +1,6 @@
 ﻿namespace MeetupAPI.MinimalApi.Requests;
 
-public class RegisterUserDtoRequest
+public class CreateUserRequest
 {
     public string Email { get; init; } = default!;
     public string Password { get; init; } = default!;
