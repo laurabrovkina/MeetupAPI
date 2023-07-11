@@ -10,7 +10,7 @@ using MinimalApi.Services;
 namespace MeetupAPI.MinimalApi.Endpoints;
 
 [HttpPost("api/v2/account/register"), AllowAnonymous]
-public class RegisterAccountEndpoint : Endpoint<RegisterUserDtoRequest, RegisterUserDtoResponse>
+public class RegisterAccountEndpoint : Endpoint<CreateUserRequest, UserResponse>
 {
     private readonly IAccountService _accountService;
     private readonly IPasswordHasher<User> _passwordHasher;
@@ -22,7 +22,7 @@ public class RegisterAccountEndpoint : Endpoint<RegisterUserDtoRequest, Register
         _passwordHasher = passwordHasher;
     }
 
-    public override async Task HandleAsync(RegisterUserDtoRequest request, CancellationToken ct)
+    public override async Task HandleAsync(CreateUserRequest request, CancellationToken ct)
     {
         var user = request.ToUser();
 
@@ -30,8 +30,8 @@ public class RegisterAccountEndpoint : Endpoint<RegisterUserDtoRequest, Register
         user.PasswordHash = passwordHash;
 
         await _accountService.CreateAsync(user);
-        
-        var userResponse = request.ToRegisterUserDtoResponse();
+
+        var userResponse = request.ToUserResponse();
         await SendCreatedAtAsync<GetUserEndpoint>(
             new { Id = user.Id }, userResponse, generateAbsoluteUrl: true, cancellation: ct
         );

@@ -1,6 +1,6 @@
 namespace MinimalApi.Requests;
 
-public class GetUserDtoRequest
+public class GetUserRequest
 {
     public int Id { get; init; }
 }
