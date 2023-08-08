@@ -51,3 +51,6 @@ The tool has a nice UI, there is a clear picture in a console window:
 * `minimal-api` - this branch holds implementation of Miniumal API using FastEndpoints. 
 
 The project file could be found in `MeetupAPI.MinimalApi` folder. Swagger documentation is set up and could be accessed using url `https://localhost:5000/swagger/index.html`.
+
+* `started-with-mediatr` - this branch shows how to migrate to MediatR and use handlers, separating the project into vertical slices. If the functionality is just like that it might not have a lot of value. But with MediatR there are some interesting features become available where
+we can set up behavior, and emit events using MediatR build-in functionality. To be continued...

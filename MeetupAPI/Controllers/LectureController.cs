@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using MeetupAPI.Entities;
 using MeetupAPI.Models;
@@ -38,7 +35,7 @@ namespace MeetupAPI.Controllers
                 return NotFound();
             }
 
-            _logger.LogWarning($"Wykłady dla meetup {meetup.Name} zostały usunięte");
+            _logger.LogWarning($"The lectures for meetup {meetup.Name} have been removed.");
 
             _meetupContext.Lectures.RemoveRange(meetup.Lectures);
             _meetupContext.SaveChanges();
