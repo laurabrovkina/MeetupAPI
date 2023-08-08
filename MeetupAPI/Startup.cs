@@ -71,10 +71,15 @@ namespace MeetupAPI
             services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
             services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
             services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
-            
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<CreateLectureValidator>();
+
             services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
             services.AddScoped<MeetupSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
+
+            services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo() {Title = "MeetupAPI", Version = "v1"});

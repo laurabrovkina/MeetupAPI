@@ -1,116 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using MeetupAPI.Entities;
+﻿using System.Threading.Tasks;
+using MediatR;
+using MeetupAPI.Lectures;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace MeetupAPI.Controllers
 {
     [Route("api/meetup/{meetupName}/lecture")]
     public class LectureController : ControllerBase
     {
-        private readonly MeetupContext _meetupContext;
-        private readonly IMapper _mapper;
-        private readonly ILogger<LectureController> _logger;
+        private readonly IMediator _mediator;
 
-        public LectureController(MeetupContext meetupContext, IMapper mapper, ILogger<LectureController> logger)
+        public LectureController(IMediator mediator)
         {
-            _meetupContext = meetupContext;
-            _mapper = mapper;
-            _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpDelete]
-        public ActionResult Delete(string meetupName)
+        public async Task<ActionResult> Delete(string meetupName)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
+            var command = new DeleteLectureByNameCommand
             {
-                return NotFound();
-            }
+                MeetupName = meetupName
+            };
 
-            _logger.LogWarning($"Wykłady dla meetup {meetup.Name} zostały usunięte");
-
-            _meetupContext.Lectures.RemoveRange(meetup.Lectures);
-            _meetupContext.SaveChanges();
+            await _mediator.Send(command);
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(string meetupName, int id)
+        public async Task<ActionResult> Delete(string meetupName, int id)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
+            var command = new DeleteLectureByIdCommand
             {
-                return NotFound();
-            }
-
-            var lecture = meetup.Lectures.FirstOrDefault(l => l.Id == id);
-
-            if (lecture == null)
-            {
-                return NotFound();
-            }
-
-            _meetupContext.Lectures.Remove(lecture);
-            _meetupContext.SaveChanges();
+                MeetupName = meetupName,
+                MeetupId = id
+            };
+            
+            await _mediator.Send(command);
 
             return NoContent();
         }
 
         [HttpGet]
-        public ActionResult Get(string meetupName)
+        public async Task<ActionResult> Get(string meetupName)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
+            var command = new GetLectureCommand
             {
-                return NotFound();
-            }
+                MeetupName = meetupName
+            };
 
-            var lectures = _mapper.Map<List<LectureDto>>(meetup.Lectures);
+            var lectures = await _mediator.Send(command);
 
             return Ok(lectures);
         }
 
         [HttpPost]
-        public ActionResult Post(string meetupName, [FromBody] LectureDto model)
+        public async Task<ActionResult> Post(string meetupName, [FromBody] LectureDto request)
         {
-            if (!ModelState.IsValid)
+            var command = new CreateLectureCommand
             {
-                return BadRequest(ModelState);
-            }
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
+                Author = request.Author,
+                Topic = request.Topic,
+                Description = request.Description,
+                Filter = meetupName
+            };
 
-            if (meetup == null)
-            {
-                return NotFound();
-            }
-
-            var lecture = _mapper.Map<Lecture>(model);
-            meetup.Lectures.Add(lecture);
-            _meetupContext.SaveChanges();
+            await _mediator.Send(command);
 
             return Created($"api/meetup/{meetupName}", null);
-
-
         }
     }
 }
