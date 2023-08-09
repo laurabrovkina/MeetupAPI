@@ -21,7 +21,7 @@ namespace MeetupAPI.Validators
             });
             RuleFor(q => q.SortBy)
                 .Must( value => string.IsNullOrEmpty(value) || allowedSortByColumnNames.Contains(value) )
-                .WithMessage($"SortBy is optionalr or it has to be in ({string.Join(",", allowedSortByColumnNames)})");
+                .WithMessage($"SortBy is optional or it has to be in ({string.Join(",", allowedSortByColumnNames)})");
         }
     }
 }
