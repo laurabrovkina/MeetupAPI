@@ -3,6 +3,7 @@ using MeetupAPI.Models;
 using MeetupAPI.Validators;
 using MeetupAPI.Entities;
 using Xunit;
+using System.Collections.Generic;
 
 namespace Meetup.UnitTests
 {
@@ -90,13 +91,7 @@ namespace Meetup.UnitTests
         }
 
         [Theory]
-        [InlineData("inValidName")]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.IsPrivate))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Location))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Lectures))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Id))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.CreatedBy))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.CreatedById))]
+        [MemberData(nameof(InvalidSortByColumnNames))]
         public void Should_Throw_Error_For_Invalid_SortBy_Column_Names(string invalidSortByColumnNames)
         {
             var allowedSortByColumnNames = new[] { nameof(MeetupAPI.Entities.Meetup.Date), 
@@ -114,6 +109,17 @@ namespace Meetup.UnitTests
             var result = _validator.TestValidate(sut);
             result.ShouldHaveValidationErrorFor(x => x.SortBy)
                 .WithErrorMessage($"SortBy is optional or it has to be in ({ string.Join(",", allowedSortByColumnNames)})");
+        }
+
+        public static IEnumerable<object[]> InvalidSortByColumnNames()
+        {
+            yield return new [] { "inValidName" };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.Location) };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.Id) };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
+            yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
         }
     }
 }
