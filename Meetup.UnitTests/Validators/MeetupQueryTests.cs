@@ -4,6 +4,7 @@ using MeetupAPI.Validators;
 using MeetupAPI.Entities;
 using Xunit;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Meetup.UnitTests
 {
@@ -20,7 +21,7 @@ namespace Meetup.UnitTests
                 PageSize = 1,
                 PageNumber = 1
             };
-            
+
             var result = _validator.TestValidate(sut);
             result.ShouldNotHaveAnyValidationErrors();
         }
@@ -45,9 +46,7 @@ namespace Meetup.UnitTests
 
         [Theory]
         [InlineData(null)]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Date))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Organizer))]
-        [InlineData(nameof(MeetupAPI.Entities.Meetup.Name))]
+        [ClassData(typeof(ValidSortByNameColumnNames))]
         public void Should_Not_Have_Validation_Error_For_Valid_SortBy_Column_Names(string allowedSortByColumnNames)
         {
             var sut = new MeetupQuery
@@ -120,6 +119,21 @@ namespace Meetup.UnitTests
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.Id) };
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
+        }
+    }
+
+    public class ValidSortByNameColumnNames : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new[] { nameof(MeetupAPI.Entities.Meetup.Date) };
+            yield return new[] { nameof(MeetupAPI.Entities.Meetup.Organizer) };
+            yield return new[] { nameof(MeetupAPI.Entities.Meetup.Name) };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
