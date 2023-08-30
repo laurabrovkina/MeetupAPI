@@ -29,9 +29,9 @@ namespace MeetupAPI.Lectures
 
             var lecture = new Lecture
             {
-                Author = request.Author,
-                Topic = request.Topic,
-                Description = request.Description
+                Author = request.Lecture.Author,
+                Topic = request.Lecture.Topic,
+                Description = request.Lecture.Description
             };
 
             meetup.Lectures.Add(lecture);

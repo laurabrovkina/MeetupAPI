@@ -7,12 +7,16 @@ namespace MeetupAPI.Models
     public class CreateLectureCommand : IRequest<Lecture>
     {
         [FromBody]
-        public string Author { get; set; }
-        [FromBody]
-        public string Topic { get; set; }
-        [FromBody]
-        public string Description { get; set; }
+        public LectureDto Lecture { get; set; }
+
         [FromRoute]
         public string MeetupName { get; set; }
+    }
+
+    public class LectureDto
+    {
+        public string Author { get; set; }
+        public string Topic { get; set; }
+        public string Description { get; set; }
     }
 }
