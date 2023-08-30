@@ -1,5 +1,5 @@
 using FluentValidation;
-using MeetupAPI.Lectures;
+using MeetupAPI.Models;
 
 namespace MeetupAPI.Validators
 {
@@ -7,9 +7,15 @@ namespace MeetupAPI.Validators
     {
         public CreateLectureValidator()
         {
-            RuleFor(x => x.Author).NotEmpty().MinimumLength(5);
-            RuleFor(x => x.Topic).NotEmpty().MinimumLength(5);
-            RuleFor(x => x.Description).MaximumLength(200);
+            RuleFor(x => x.Author)
+                .MinimumLength(5)
+                .WithMessage("The author can't be less than 5 characters.");
+            RuleFor(x => x.Topic)
+                .MinimumLength(5)
+                .WithMessage("The topic can't be less than 5 characters.");
+            RuleFor(x => x.Description)
+                .MaximumLength(200)
+                .WithMessage("The description max length is 200 characters.");
         }
     }
 }

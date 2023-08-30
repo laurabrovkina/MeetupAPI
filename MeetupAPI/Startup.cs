@@ -2,12 +2,13 @@
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using MeetupAPI.Authorization;
+using MeetupAPI.Behaviour;
 using MeetupAPI.Entities;
 using MeetupAPI.Filters;
 using MeetupAPI.Identity;
-using MeetupAPI.Models;
-using MeetupAPI.Validators;
+using MeetupAPI.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -66,19 +67,17 @@ namespace MeetupAPI
             services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
             services.AddScoped<IJwtProvider, JwtProvider>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
-            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
-            services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
-            services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
-            services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
+            services.AddControllers();
+
+            services.AddValidatorsFromAssemblyContaining<Startup>();
             services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<CreateLectureValidator>();
 
             services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
             services.AddScoped<MeetupSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
 
             services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             services.AddSwaggerGen(c =>
             {
@@ -114,6 +113,8 @@ namespace MeetupAPI
             }
 
             IdentityModelEventSource.ShowPII = true;
+
+            app.UseMiddleware<ValidationMappingMiddleware>();
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
