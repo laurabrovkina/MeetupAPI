@@ -62,6 +62,7 @@ namespace MeetupAPI
                 options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
             });
 
+            services.AddTransient<ValidationMappingMiddleware>();
             services.AddScoped<TimeTrackFilter>();
             services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler>();
             services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();

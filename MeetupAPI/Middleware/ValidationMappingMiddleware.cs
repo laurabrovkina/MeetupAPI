@@ -1,58 +1,55 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MeetupAPI.Middleware
 {
-    public class ValidationMappingMiddleware
+    public class ValidationMappingMiddleware : IMiddleware
     {
-        private readonly RequestDelegate _next;
-
-        public ValidationMappingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (ValidationException exception)
             {
-                context.Response.StatusCode = 400;
+                context.Response.StatusCode = 500;
+                ProblemDetails problem = new()
+                {
+                    Status = (int)HttpStatusCode.BadRequest,
+                    Type = exception.GetType().ToString(),
+                    Title = "Validation exception",
+                    Detail = exception.Message
+                };
 
-                var result = JsonConvert.SerializeObject(new { Error = exception.Message });
+                string json = JsonSerializer.Serialize(problem);
 
-                await context.Response.WriteAsync(result);
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsync(json);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                context.Response.StatusCode = 400;
+                context.Response.StatusCode = 500;
+                ProblemDetails problem = new()
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Type = "Server error",
+                    Title = "Server error",
+                    Detail = "An internal server error has occured"
+                };
 
-                var result = JsonConvert.SerializeObject(new { Error = exception.Message });
+                string json = JsonSerializer.Serialize(problem);
 
-                await context.Response.WriteAsync(result);
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsync(json);
             }
         }
-
-        //public void Invoke(HttpContext context)
-        //{
-        //    try
-        //    {
-        //        _next(context);
-        //    }
-        //    catch (ValidationException exception)
-        //    {
-        //        context.Response.StatusCode = 400;
-
-        //        var result = JsonConvert.SerializeObject(new { Error = exception.Message }, Formatting.None);
-
-        //        context.Response.WriteAsync(result);
-        //    }
-        //}
     }
 }
