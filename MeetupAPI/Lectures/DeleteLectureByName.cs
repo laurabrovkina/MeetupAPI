@@ -8,22 +8,24 @@ using Microsoft.Extensions.Logging;
 
 namespace MeetupAPI.Lectures
 {
-    public record DeleteLectureByNameCommand : IRequest
+    public record DeleteLectureByNameCommand : IRequest<Unit>
     {
         public string MeetupName { get; set; }
     }
 
-    public class DeleteLectureByNameHandler : IRequestHandler<DeleteLectureByNameCommand>
+    public class DeleteLectureByNameHandler : IRequestHandler<DeleteLectureByNameCommand, Unit>
     {
         private readonly MeetupContext _meetupContext;
         private readonly ILogger<DeleteLectureByNameHandler> _logger;
 
-        public DeleteLectureByNameHandler(MeetupContext meetupContext)
+        public DeleteLectureByNameHandler(MeetupContext meetupContext,
+            ILogger<DeleteLectureByNameHandler> logger)
         {
             _meetupContext = meetupContext;
+            _logger = logger;
         }
 
-        public async Task Handle(DeleteLectureByNameCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteLectureByNameCommand request, CancellationToken cancellationToken)
         {
             var meetup = _meetupContext.Meetups
                 .Include(m => m.Lectures)
@@ -38,6 +40,8 @@ namespace MeetupAPI.Lectures
 
             _meetupContext.Lectures.RemoveRange(meetup.Lectures);
             _meetupContext.SaveChanges();
+
+            return Unit.Value;
         }
     }
 }

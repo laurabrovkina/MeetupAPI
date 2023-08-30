@@ -10,12 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeetupAPI.Lectures
 {
-    public record GetLectureCommand() : IRequest<List<LectureDto>>
+    public record GetLectureCommand() : IRequest<List<CreateLectureCommand>>
     {
         public string MeetupName { get; set; }
     }
 
-    public class GetLectureHandler : IRequestHandler<GetLectureCommand, List<LectureDto>>
+    public class GetLectureHandler : IRequestHandler<GetLectureCommand, List<CreateLectureCommand>>
     {
         private readonly MeetupContext _meetupContext;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace MeetupAPI.Lectures
             _mapper = mapper;
         }
 
-        public async Task<List<LectureDto>> Handle(GetLectureCommand request, CancellationToken cancellationToken)
+        public async Task<List<CreateLectureCommand>> Handle(GetLectureCommand request, CancellationToken cancellationToken)
         {
             var meetup = _meetupContext.Meetups
                 .Include(m => m.Lectures)
@@ -37,7 +37,7 @@ namespace MeetupAPI.Lectures
                 throw new System.Exception();
             }
 
-            var lectures = _mapper.Map<List<LectureDto>>(meetup.Lectures);
+            var lectures = _mapper.Map<List<CreateLectureCommand>>(meetup.Lectures);
 
             return await Task.FromResult(lectures);
         }

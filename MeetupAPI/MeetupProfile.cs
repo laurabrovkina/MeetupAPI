@@ -20,7 +20,7 @@ namespace MeetupAPI
 
             CreateMap<MeetupDto, Meetup>();
 
-            CreateMap<LectureDto, Lecture>()
+            CreateMap<CreateLectureCommand, Lecture>()
                 .ReverseMap();
         }
     }

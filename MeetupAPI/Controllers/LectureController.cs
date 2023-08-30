@@ -17,59 +17,35 @@ namespace MeetupAPI.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> Delete(string meetupName)
+        public async Task<ActionResult> Delete(DeleteLectureByNameCommand name)
         {
-            var command = new DeleteLectureByNameCommand
-            {
-                MeetupName = meetupName
-            };
-
-            await _mediator.Send(command);
+            await _mediator.Send(name);
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string meetupName, int id)
-        {
-            var command = new DeleteLectureByIdCommand
-            {
-                MeetupName = meetupName,
-                MeetupId = id
-            };
-            
-            await _mediator.Send(command);
+        public async Task<ActionResult> Delete(DeleteLectureByIdCommand request)
+        {          
+            await _mediator.Send(request);
 
             return NoContent();
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get(string meetupName)
+        public async Task<ActionResult> Get(GetLectureCommand request)
         {
-            var command = new GetLectureCommand
-            {
-                MeetupName = meetupName
-            };
-
-            var lectures = await _mediator.Send(command);
+            var lectures = await _mediator.Send(request);
 
             return Ok(lectures);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(string meetupName, [FromBody] LectureDto request)
+        public async Task<ActionResult> Post(CreateLectureCommand request)
         {
-            var command = new CreateLectureCommand
-            {
-                Author = request.Author,
-                Topic = request.Topic,
-                Description = request.Description,
-                Filter = meetupName
-            };
+            await _mediator.Send(request);
 
-            await _mediator.Send(command);
-
-            return Created($"api/meetup/{meetupName}", null);
+            return Created($"api/meetup/{request.MeetupName}", null);
         }
     }
 }
