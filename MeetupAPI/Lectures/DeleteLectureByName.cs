@@ -3,12 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MeetupAPI.Entities;
+using MeetupAPI.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MeetupAPI.Lectures
 {
-    public record DeleteLectureByNameCommand : IRequest<Unit>
+    public record DeleteLectureByNameCommand : IValidatableRequest<Unit>
     {
         public string MeetupName { get; set; }
     }

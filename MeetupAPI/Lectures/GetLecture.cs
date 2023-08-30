@@ -6,11 +6,12 @@ using AutoMapper;
 using MediatR;
 using MeetupAPI.Entities;
 using MeetupAPI.Models;
+using MeetupAPI.Validation;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeetupAPI.Lectures
 {
-    public record GetLectureCommand() : IRequest<List<CreateLectureCommand>>
+    public record GetLectureCommand() : IValidatableRequest<List<CreateLectureCommand>>
     {
         public string MeetupName { get; set; }
     }

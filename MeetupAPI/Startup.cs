@@ -4,7 +4,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using MeetupAPI.Authorization;
-using MeetupAPI.Behaviour;
 using MeetupAPI.Entities;
 using MeetupAPI.Filters;
 using MeetupAPI.Identity;
@@ -61,6 +60,8 @@ namespace MeetupAPI
                 options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality","German","English"));
                 options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
             });
+            
+            services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
 
             services.AddTransient<ValidationMappingMiddleware>();
             services.AddScoped<TimeTrackFilter>();
@@ -77,8 +78,6 @@ namespace MeetupAPI
             services.AddScoped<MeetupSeeder>();
             services.AddAutoMapper(this.GetType().Assembly);
 
-            services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             services.AddSwaggerGen(c =>
             {

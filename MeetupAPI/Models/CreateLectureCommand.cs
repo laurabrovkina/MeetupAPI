@@ -1,10 +1,11 @@
 ﻿using MediatR;
 using MeetupAPI.Entities;
+using MeetupAPI.Validation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MeetupAPI.Models
 {
-    public class CreateLectureCommand : IRequest<Lecture>
+    public class CreateLectureCommand : IValidatableRequest<Lecture>
     {
         [FromBody]
         public LectureDto Lecture { get; set; }
