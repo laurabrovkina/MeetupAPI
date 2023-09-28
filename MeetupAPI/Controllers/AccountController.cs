@@ -1,5 +1,4 @@
-﻿using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
+﻿using MeetupAPI.Entities;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,17 +15,14 @@ namespace MeetupAPI.Controllers
         private readonly MeetupContext _meetupContext;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IJwtProvider _jwtProvider;
-        private readonly IAuthorizationService _authorizationService;
 
         public AccountController(MeetupContext meetupContext,
             IPasswordHasher<User> passwordHasher,
-            IJwtProvider jwtProvider,
-            IAuthorizationService authorizationService)
+            IJwtProvider jwtProvider)
         {
             _meetupContext = meetupContext;
             _passwordHasher = passwordHasher;
             _jwtProvider = jwtProvider;
-            _authorizationService = authorizationService;
         }
 
         [HttpPost("login")]

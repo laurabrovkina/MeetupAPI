@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  meetup-api:
+    image: meetupapi
+    container_name: MeetupAPI
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+  meetup-api-db:
+    build: .
+    container_name: MeetupAPI.Db
+    volumes:
+        - ./.containers/database:/var/opt/mssql/data
+    ports:
+        - "14038:1433"
+    networks:
+      - test
+
+networks:
+ test:
