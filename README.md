@@ -54,3 +54,21 @@ The project file could be found in `MeetupAPI.MinimalApi` folder. Swagger docume
 
 * `started-with-mediatr` - this branch shows how to migrate to MediatR and use handlers, separating the project into vertical slices. If the functionality is just like that it might not have a lot of value. But with MediatR there are some interesting features become available where
 we can set up behavior, and emit events using MediatR build-in functionality. To be continued...
+
+#### Dockerization
+* The original idea was found on github, [Mssql-docker-initialization-demo](https://github.com/tometchy/Mssql-docker-initialization-demo):
+
+Find out more details in the [article](https://www.softwaredeveloper.blog/initialize-mssql-in-docker-container).
+
+To build image on your machine:
+```
+docker build -t db-meetup . --no-cache
+``` 
+`--no-cache` is especially useful when the image has already existed on your machine and you need to update it with new changes.
+
+Then, run the container:
+```
+docker run -p 14033:1433 -d db-meetup
+```
+
+Next, you can establish a connection to the SQL Server using SQL Server Management Studio (SSMS). When doing so from your local machine, enter `localhost,14033` as the Server name. Opt for SQL Server Authentication and input the "sa" user along with the corresponding password specified in the Dockerfile.
