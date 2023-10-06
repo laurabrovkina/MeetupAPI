@@ -1,20 +1,130 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using NLog.Web;
+﻿using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MeetupAPI;
+using MeetupAPI.Authorization;
+using MeetupAPI.Entities;
+using MeetupAPI.Filters;
+using MeetupAPI.Identity;
+using MeetupAPI.Models;
+using MeetupAPI.Validators;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
+using System.Text;
 
-namespace MeetupAPI
+var builder = WebApplication.CreateBuilder(args);
+var jwtOptions = new JwtOptions();
+builder.Configuration.GetSection("jwt").Bind(jwtOptions);
+
+builder.Services.AddSingleton(jwtOptions);
+
+builder.Services.AddAuthentication(options =>
 {
-    public class Program
+    options.DefaultAuthenticateScheme = "Bearer";
+    options.DefaultScheme = "Bearer";
+    options.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.TokenValidationParameters = new TokenValidationParameters
     {
-        public static void Main(string[] args)
-        {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+        ValidIssuer = jwtOptions.JwtIssuer,
+        ValidAudience = jwtOptions.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey))
+    };
+});
+builder.Services.AddAuthorization(options =>
+{
+    // this policy will be met only by user with specified nationality
+    options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "English"));
+    options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
+});
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseNLog();
+builder.Services.AddScoped<TimeTrackFilter>();
+builder.Services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
+builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
+builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
+builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
+builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
+builder.Services.AddScoped<MeetupSeeder>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "MeetupAPI", Version = "v1" });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontEndClient", builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
+});
+
+var app = builder.Build();
+
+app.UseResponseCaching();
+app.UseStaticFiles();
+app.UseCors("FrontEndClient");
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MeetupAPI v1");
+});
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+IdentityModelEventSource.ShowPII = true;
+
+app.UseAuthentication();
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
+SeedDatabase();
+
+app.Run();
+
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        try
+        {
+            var meetupSeeder = scope.ServiceProvider.GetRequiredService<MeetupSeeder>();
+            meetupSeeder.Seed();
+        }
+        catch
+        {
+            throw;
+        }
     }
+}
+
+public partial class Program 
+{
 }
