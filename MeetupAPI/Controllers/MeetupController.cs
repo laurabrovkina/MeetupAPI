@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
+using System.Threading.Tasks;
 
 namespace MeetupAPI.Controllers
 {
@@ -99,7 +100,7 @@ namespace MeetupAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Moderator")]
-        public ActionResult Post([FromBody]MeetupDto model)
+        public async Task<ActionResult> Post([FromBody]MeetupDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -112,8 +113,8 @@ namespace MeetupAPI.Controllers
 
             meetup.CreatedById = int.Parse(userId);
 
-            _meetupContext.Meetups.Add(meetup);
-            _meetupContext.SaveChanges();
+            await _meetupContext.Meetups.AddAsync(meetup);
+            await _meetupContext.SaveChangesAsync();
 
             var key = meetup.Name.Replace(" ", "-").ToLower();
             return Created("api/meetup/" + key, null);

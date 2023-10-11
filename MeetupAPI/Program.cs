@@ -54,7 +54,7 @@ builder.Services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler
 builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddControllers(options => options.Filters.Add(typeof(ExceptionFilter))).AddFluentValidation();
+builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
@@ -104,7 +104,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-SeedDatabase();
+//SeedDatabase();
 
 app.Run();
 

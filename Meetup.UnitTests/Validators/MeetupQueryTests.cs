@@ -1,7 +1,6 @@
 using FluentValidation.TestHelper;
 using MeetupAPI.Models;
 using MeetupAPI.Validators;
-using MeetupAPI.Entities;
 using Xunit;
 using System.Collections.Generic;
 using System.Collections;
