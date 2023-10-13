@@ -26,20 +26,6 @@ public class CreateLectureControllerTests : IClassFixture<TestFixture>
     public async Task Create_ReturnsCreated_WhenLectureCreated()
     {
         // Arrange
-        // Create roles when db is up in container
-        //INSERT INTO
-        //[MeetupDb].[dbo].[Roles]
-        //VALUES('User'),('Moderator'),('Admin')
-
-        var user = new RegisterUserDto
-        {
-            Email = "test@test.com",
-            RoleId = 3 // Admin
-        };
-
-        var createUser= await _client.PostAsJsonAsync("api/account/register", user);
-        createUser.EnsureSuccessStatusCode();
-
         var meetup = new MeetupDto
         {
             Name = "meetup",
