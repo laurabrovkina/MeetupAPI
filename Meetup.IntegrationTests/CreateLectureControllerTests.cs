@@ -1,6 +1,6 @@
+using Bogus;
 using FluentAssertions;
 using MeetupAPI.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,33 +14,31 @@ namespace Meetup.IntegrationTests;
 public class CreateLectureControllerTests : IClassFixture<TestFixture>
 {
     private readonly HttpClient _client;
+    private readonly Faker<MeetupDto> _meetupFaker;
+    private readonly Faker<LectureDto> _lectureFaker;
 
     public CreateLectureControllerTests(TestFixture testFixture)
     {
         _client = testFixture.CreateClient();
+        _meetupFaker = new Faker<MeetupDto>()
+            .RuleFor(x => x.Name, faker => faker.Lorem.Word())
+            .RuleFor(x => x.Organizer, faker => faker.Person.FirstName);
+        _lectureFaker = new Faker<LectureDto>()
+            .RuleFor(x => x.Author, faker => faker.Person.FullName)
+            .RuleFor(x => x.Topic, faker => faker.Lorem.Word())
+            .RuleFor(x => x.Description, faker => faker.Lorem.Sentence());
     }
 
     [Fact]
     public async Task Create_ReturnsCreated_WhenLectureCreated()
     {
         // Arrange
-        var meetup = new MeetupDto
-        {
-            Name = "meetup",
-            Organizer = "Nick",
-            Date = DateTime.Now,
-            IsPrivate = false
-        };
+        var meetup = _meetupFaker.Generate();
 
         var createResponse = await _client.PostAsJsonAsync("api/meetup", meetup);
         createResponse.EnsureSuccessStatusCode();
 
-        var lecture = new LectureDto
-        {
-            Author = "New author",
-            Topic = "topic",
-            Description = "description"
-        };
+        var lecture = _lectureFaker.Generate();
 
         // Act
         var response = await _client.PostAsJsonAsync($"api/meetup/{meetup.Name}/lecture", lecture);
@@ -53,21 +51,12 @@ public class CreateLectureControllerTests : IClassFixture<TestFixture>
     public async Task Create_ReturnsLecutre_WhenLectureCreated()
     {
         // Arrange
-        var meetup = new MeetupDto
-        {
-            Name = "new-meetup",
-            Organizer = "Nick"
-        };
+        var meetup = _meetupFaker.Generate();
 
         var createMeetup = await _client.PostAsJsonAsync("api/meetup", meetup);
         createMeetup.EnsureSuccessStatusCode();
 
-        var lecture = new LectureDto
-        {
-            Author = "New author",
-            Topic = "topic",
-            Description = "description"
-        };
+        var lecture = _lectureFaker.Generate();
 
         // Act
         await _client.PostAsJsonAsync($"api/meetup/{meetup.Name}/lecture", lecture);
