@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
-using System.Threading.Tasks;
 
 namespace MeetupAPI.Controllers
 {

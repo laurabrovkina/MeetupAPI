@@ -1,7 +1,8 @@
 using FluentAssertions;
-using MeetupAPI.Entities;
 using MeetupAPI.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -54,9 +55,12 @@ public class CreateLectureControllerTests : IClassFixture<TestFixture>
         // Arrange
         var meetup = new MeetupDto
         {
-            Name = "meetup",
+            Name = "new-meetup",
             Organizer = "Nick"
         };
+
+        var createMeetup = await _client.PostAsJsonAsync("api/meetup", meetup);
+        createMeetup.EnsureSuccessStatusCode();
 
         var lecture = new LectureDto
         {
@@ -65,12 +69,14 @@ public class CreateLectureControllerTests : IClassFixture<TestFixture>
             Description = "description"
         };
 
-        var createResponse = await _client.PostAsJsonAsync($"api/meetup/{meetup.Name}/lecture", lecture);
-        var createdLecture = await createResponse.Content.ReadFromJsonAsync<Lecture>();
-
         // Act
-        createdLecture.Author.Should().Be(lecture.Author);
-        createdLecture.Topic.Should().Be(lecture.Topic);
-        createdLecture.Description.Should().Be(lecture.Description);
+        await _client.PostAsJsonAsync($"api/meetup/{meetup.Name}/lecture", lecture);
+
+        // Assert
+        var createdResponse = await _client.GetAsync($"api/meetup/{meetup.Name}/lecture");
+        var createdLecture = await createdResponse.Content.ReadFromJsonAsync<List<LectureDto>>();
+        createdLecture.FirstOrDefault().Author.Should().Be(lecture.Author);
+        createdLecture.FirstOrDefault().Topic.Should().Be(lecture.Topic);
+        createdLecture.FirstOrDefault().Description.Should().Be(lecture.Description);
     }
 }
