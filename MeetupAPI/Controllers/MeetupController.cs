@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using AutoMapper;
@@ -100,7 +100,7 @@ namespace MeetupAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin,Moderator")]
-        public async Task<ActionResult> Post([FromBody]MeetupDto model)
+        public ActionResult Post([FromBody]MeetupDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -113,8 +113,8 @@ namespace MeetupAPI.Controllers
 
             meetup.CreatedById = int.Parse(userId);
 
-            await _meetupContext.Meetups.AddAsync(meetup);
-            await _meetupContext.SaveChangesAsync();
+            _meetupContext.Meetups.Add(meetup);
+            _meetupContext.SaveChanges();
 
             var key = meetup.Name.Replace(" ", "-").ToLower();
             return Created("api/meetup/" + key, null);

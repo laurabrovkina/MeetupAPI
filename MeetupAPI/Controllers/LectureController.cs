@@ -106,8 +106,6 @@ namespace MeetupAPI.Controllers
             _meetupContext.SaveChanges();
 
             return Created($"api/meetup/{meetupName}", null);
-
-
         }
     }
 }

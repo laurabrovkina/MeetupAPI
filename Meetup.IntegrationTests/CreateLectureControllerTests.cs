@@ -4,7 +4,6 @@ using MeetupAPI.Models;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,8 +17,6 @@ public class CreateLectureControllerTests : IClassFixture<TestFixture>
     public CreateLectureControllerTests(TestFixture testFixture)
     {
         _client = testFixture.CreateClient();
-        //_client.DefaultRequestHeaders.Authorization =
-        //    new AuthenticationHeaderValue(scheme: "TestScheme");
     }
 
     [Fact]
