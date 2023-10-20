@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Respawn;
+using System.Data.Common;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Testcontainers.MsSql;
@@ -28,6 +32,11 @@ public class TestFixture : WebApplicationFactory<Program>, IAsyncLifetime
         .WithCleanUp(true)
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(MsSqlPort))
         .Build();
+
+    private DbConnection _dbConnection;
+    private Respawner _respawner;
+
+    public HttpClient HttpClient { get; private set; } 
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -56,9 +65,27 @@ public class TestFixture : WebApplicationFactory<Program>, IAsyncLifetime
         });
     }
 
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
+    }
+
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+        _dbConnection = new SqlConnection(_dbContainer.GetConnectionString());
+        HttpClient = CreateClient();
+        await InitializeRespawner();
+    }
+
+    private async Task InitializeRespawner()
+    {
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+            SchemasToInclude = new[] { "dbo" }
+        });
     }
 
     public new async Task DisposeAsync()

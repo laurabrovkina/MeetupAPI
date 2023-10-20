@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using FluentAssertions;
 using MeetupAPI.Models;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -9,14 +10,18 @@ using Xunit;
 
 namespace Meetup.IntegrationTests;
 
-public class CreateMeetupControllerTests : IClassFixture<TestFixture>
+[Collection("Test collection")]
+public class CreateMeetupControllerTests : IAsyncLifetime
 {
     private readonly HttpClient _client;
+    private readonly Func<Task> _resetDatabase;
     private readonly Faker<MeetupDto> _meetupFaker;
 
     public CreateMeetupControllerTests(TestFixture testFixture)
     {
-        _client = testFixture.CreateClient();
+        _client = testFixture.HttpClient;
+        _resetDatabase = testFixture.ResetDatabaseAsync;
+
         _meetupFaker = new Faker<MeetupDto>()
             .RuleFor(x => x.Name, faker => faker.Lorem.Word())
             .RuleFor(x => x.Organizer, faker => faker.Person.FirstName);
@@ -50,4 +55,8 @@ public class CreateMeetupControllerTests : IClassFixture<TestFixture>
         createdLecture.Name.Should().Be(meetup.Name);
         createdLecture.Organizer.Should().Be(meetup.Organizer);
     }
+
+    public Task DisposeAsync() => _resetDatabase();
+
+    public Task InitializeAsync() => Task.CompletedTask;
 }
