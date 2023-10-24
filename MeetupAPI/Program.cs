@@ -1,14 +1,17 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
 using MeetupAPI;
 using MeetupAPI.Authorization;
 using MeetupAPI.Entities;
 using MeetupAPI.Filters;
+using MeetupAPI.Health;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
 using MeetupAPI.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -47,6 +50,22 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "English"));
     options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
 });
+
+builder.Services.AddHealthChecks()
+    //.AddSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;",
+    //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
+    .AddCheck<DatabaseHealthCheck>("Database");
+
+//adding healthchecks UI
+builder.Services.AddHealthChecksUI(opt =>
+{
+    opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
+    opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
+    opt.SetApiMaxActiveRequests(1); //api requests concurrency
+
+    opt.AddHealthCheckEndpoint("Health Check", "/healthz"); //map health check api
+})
+.AddInMemoryStorage();
 
 builder.Services.AddScoped<TimeTrackFilter>();
 builder.Services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler>();
@@ -98,10 +117,22 @@ app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
+    //adding endpoint of health check for the health check ui in UI format
+    endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
+    {
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
+    //map healthcheck ui endpoing - default is /healthchecks-ui/
+    endpoints.MapHealthChecksUI();
 });
+
+
 
 //SeedDatabase();
 

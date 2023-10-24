@@ -72,3 +72,36 @@ docker run -p 14033:1433 -d db-meetup
 ```
 
 Next, you can establish a connection to the SQL Server using SQL Server Management Studio (SSMS). When doing so from your local machine, enter `localhost,14033` as the Server name. Opt for SQL Server Authentication and input the "sa" user along with the corresponding password specified in the Dockerfile.
+
+#### Health Checks
+* There is a good [article](https://rmauro.dev/adding-health-checks-ui/) how to set up UI client for a health check. 
+* Meetup project needs to be sure that db connection is up and running correctly.
+* To make a call to health check,
+```
+https://localhost:5001/healthz
+```
+Then, you would see a more detailed response compare to a very standard one:
+```
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.0037176",
+  "entries": {
+    "Database": {
+      "data": { },
+      "duration": "00:00:00.0024150",
+      "status": "Healthy",
+      "tags": [ ]
+    }
+  }
+}
+```
+* If you prefer to access the Health Check UI, there is a link for that:
+```
+https://localhost:5001/healthchecks-ui#/healthchecks
+```
+The Health Check UI page looks like that:
+![Screenshot of tv](Img/health-check-ui-screenshot.jpg)
+
+* Polling time between check is set to 15 seconds
+* 60 entries is maximum history of checks
+* API requests concurrency is set to 1
