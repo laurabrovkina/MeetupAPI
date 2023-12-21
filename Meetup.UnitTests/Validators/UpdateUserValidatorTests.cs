@@ -22,7 +22,7 @@ public class UpdateUserValidatorTests
     {
         // Arrange           
         var validator = new UpdateUserValidator(meetupContext);
-        var updateUserDto = new UpdateUserDto { RoleId = 999 }; // Assuming 999 is an invalid RoleId
+        var updateUserDto = new UpdateUserDto { RoleId = 111 }; // Assuming 111 is an invalid RoleId
 
         // Act
         var result = validator.TestValidate(updateUserDto);
