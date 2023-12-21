@@ -11,6 +11,7 @@ namespace MeetupAPI.Validators
         private string[] allowedSortByColumnNames = { nameof(Meetup.Date), nameof(Meetup.Organizer), nameof(Meetup.Name) };
         public MeetupQueryValidator()
         {
+            RuleFor(q => q.SearchPhrase).NotEmpty();
             RuleFor(q => q.PageNumber).GreaterThanOrEqualTo(1);
             RuleFor(q => q.PageSize).Custom((value, context) =>
             {

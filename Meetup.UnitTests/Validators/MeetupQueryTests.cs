@@ -74,18 +74,42 @@ namespace Meetup.UnitTests
             result.ShouldHaveValidationErrorFor(x => x.PageNumber);
         }
 
-        [Fact]
-        public void Should_Throw_Error_When_Page_Size_Is_Not_Valid()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(2)]
+        [InlineData(-1)]
+        [InlineData(1000)]
+        public void Should_Throw_Error_When_Page_Size_Is_Not_Valid(int pageSize)
         {
             var sut = new MeetupQuery
             {
                 SearchPhrase = "meetup",
-                PageSize = 2,
+                PageSize = pageSize,
                 PageNumber = 1
             };
 
             var result = _validator.TestValidate(sut);
             result.ShouldHaveValidationErrorFor(x => x.PageSize);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void Should_Throw_Error_When_Search_Phrase_Is_Null_Or_Empty(string searchPhrase)
+        {
+            // Arrange
+            var sut = new MeetupQuery
+            {
+                SearchPhrase = searchPhrase,
+                PageSize = 1,
+                PageNumber = 1
+            };
+
+            // Act
+            var result = _validator.TestValidate(sut);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(x => x.SearchPhrase);
         }
 
         [Theory]
@@ -111,7 +135,7 @@ namespace Meetup.UnitTests
 
         public static IEnumerable<object[]> InvalidSortByColumnNames()
         {
-            yield return new [] { "inValidName" };
+            yield return new [] { "InvalidColumnName" };
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.Location) };
             yield return new [] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
