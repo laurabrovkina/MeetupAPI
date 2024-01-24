@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meetup-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: meetup-api
+  template:
+    metadata:
+      labels:
+        app: meetup-api
+    spec:
+      containers:
+      - name: meetup-api
+        image: meetup-api:latest
+        resources:
+          limits:
+            memory: "256Mi"  # Maximum memory allowed
+            cpu: "200m"       # Maximum CPU allowed (200 milliCPU)
+          requests:
+            memory: "128Mi"  # Initial memory request
+            cpu: "100m"       # Initial CPU request
+        env:
+          - name: DATABASE_HOST
+            value: db.meetup-api.com
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: my-secret
+                key: api-key
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "${STAGE_NAME}" # dev, staging, prod
+        ports:
+          - name: www 
+            containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /                # The path to check for the liveness probe
+            port: 80               # The port to check on
+          initialDelaySeconds: 15  # Wait this many seconds before starting the probe
+          periodSeconds: 10        # Check the probe every 10 seconds
+        readinessProbe:
+          httpGet:
+            path: /                # The path to check for the readiness probe
+            port: 80               # The port to check on
+          initialDelaySeconds: 5   # Wait this many seconds before starting the probe
+          periodSeconds: 5         # Check the probe every 5 seconds
