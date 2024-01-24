@@ -139,3 +139,8 @@ ___
 - `_fixture`: An instance of the `DatabaseFixture` class used for setting up the database context.
 - `meetupContext`: The `MeetupContext` object used for database operations.
 ___
+#### Custom Fact Attribute
+`CustomFactAttribute` could mark a test that needs to be skipped on as particular environment. E.g. test `Create_ReturnsCreated_WhenLectureCreated` would be skipped on a `staging` env as it is marked by `CustomFactAttribute`.
+#### Kubernetes Deployment YAML File
+`deployment.yaml` was added as an example. More info on:
+[kubernetes-deployment-yaml](https://spacelift.io/blog/kubernetes-deployment-yaml)
