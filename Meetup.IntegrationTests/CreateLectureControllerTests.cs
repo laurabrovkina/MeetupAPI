@@ -34,7 +34,9 @@ public class CreateLectureControllerTests : IAsyncLifetime
             .RuleFor(x => x.Description, faker => faker.Lorem.Sentence());
     }
 
-    [Fact]
+    // This test will be skipped only on environment with name set up to "staging"
+    // Look at the deployment.yaml for more details
+    [CustomFact]
     public async Task Create_ReturnsCreated_WhenLectureCreated()
     {
         // Arrange
