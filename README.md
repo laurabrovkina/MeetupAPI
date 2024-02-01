@@ -12,7 +12,8 @@ VALUES ('User'),('Moderator'),('Admin')
 ## Swagger
 * Swagger documentation is set up and could be accessed using url `https://localhost:5001/swagger/index.html`
 * This should be moved to the launching page in future as an improvement
-
+## Postman Collection
+All available endpoints you might find in `dev-tools`, they stored as a Postman collection.
 ## Branches
 * `ef-sp-migration` this is an example how to add stored procedures to your EF Migrations
 There is a good [artical](https://clearmeasure.com/creating-stored-procs-in-ef-migrations/) to achieve that in your progect
@@ -135,6 +136,7 @@ ___
 - `ShouldHaveValidationError_WhenEmailDoesNotExist`: This method tests if a validation error is thrown when the `Email` property of the `UpdateUserDto` object does not exist in the database. It follows a similar approach as the previous method, but sets an invalid email address in the `UpdateUserDto` object.
 - `ShouldNotHaveValidationError_WhenRoleIdAndEmailExist`: This method tests if no validation error is thrown when both the `RoleId` and `Email` properties of the `UpdateUserDto` object exist in the database. It follows a similar approach as the previous methods, but sets valid values for both properties.
 ___
+### Environments
 #### Fields
 - `_fixture`: An instance of the `DatabaseFixture` class used for setting up the database context.
 - `meetupContext`: The `MeetupContext` object used for database operations.
