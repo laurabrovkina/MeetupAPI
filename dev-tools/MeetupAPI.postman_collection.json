@@ -35,7 +35,7 @@
 												}
 											}
 										},
-										"url": "{{baseUrl}}/api/account/login"
+										"url": "{{api_url}}/api/account/login"
 									},
 									"response": [
 										{
@@ -94,7 +94,7 @@
 												}
 											}
 										},
-										"url": "{{baseUrl}}/api/account/register"
+										"url": "{{api_url}}/api/account/register"
 									},
 									"response": [
 										{
@@ -153,7 +153,7 @@
 												}
 											}
 										},
-										"url": "{{baseUrl}}/api/account/edit"
+										"url": "{{api_url}}/api/account/edit"
 									},
 									"response": [
 										{
@@ -279,9 +279,9 @@
 												"method": "DELETE",
 												"header": [],
 												"url": {
-													"raw": "{{baseUrl}}/api/meetup/:meetupName/lecture",
+													"raw": "{{api_url}}/api/meetup/:meetupName/lecture",
 													"host": [
-														"{{baseUrl}}"
+														"{{api_url}}"
 													],
 													"path": [
 														"api",
@@ -337,9 +337,9 @@
 												"method": "GET",
 												"header": [],
 												"url": {
-													"raw": "{{baseUrl}}/api/meetup/:meetupName/lecture",
+													"raw": "{{api_url}}/api/meetup/:meetupName/lecture",
 													"host": [
-														"{{baseUrl}}"
+														"{{api_url}}"
 													],
 													"path": [
 														"api",
@@ -410,9 +410,9 @@
 													}
 												},
 												"url": {
-													"raw": "{{baseUrl}}/api/meetup/:meetupName/lecture",
+													"raw": "{{api_url}}/api/meetup/:meetupName/lecture",
 													"host": [
-														"{{baseUrl}}"
+														"{{api_url}}"
 													],
 													"path": [
 														"api",
@@ -495,9 +495,9 @@
 											}
 										],
 										"url": {
-											"raw": "{{baseUrl}}/api/meetup/:name",
+											"raw": "{{api_url}}/api/meetup/:name",
 											"host": [
-												"{{baseUrl}}"
+												"{{api_url}}"
 											],
 											"path": [
 												"api",
@@ -507,8 +507,7 @@
 											"variable": [
 												{
 													"key": "name",
-													"value": "<string>",
-													"description": "(Required) "
+													"value": ""
 												}
 											]
 										}
@@ -576,9 +575,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/api/meetup/:name",
+											"raw": "{{api_url}}/api/meetup/:name",
 											"host": [
-												"{{baseUrl}}"
+												"{{api_url}}"
 											],
 											"path": [
 												"api",
@@ -710,9 +709,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/api/meetup?SearchPhrase=<string>&PageSize=<integer>&PageNumber=<integer>&SortBy=<string>&SortDirection=1",
+									"raw": "{{api_url}}/api/meetup?SearchPhrase=<string>&PageSize=<integer>&PageNumber=<integer>&SortBy=<string>&SortDirection=1",
 									"host": [
-										"{{baseUrl}}"
+										"{{api_url}}"
 									],
 									"path": [
 										"api",
@@ -820,7 +819,7 @@
 										}
 									}
 								},
-								"url": "{{baseUrl}}/api/meetup"
+								"url": "{{api_url}}/api/meetup"
 							},
 							"response": [
 								{
@@ -869,7 +868,7 @@
 							"request": {
 								"method": "OPTIONS",
 								"header": [],
-								"url": "{{baseUrl}}/config/reload"
+								"url": "{{api_url}}/config/reload"
 							},
 							"response": [
 								{
@@ -901,9 +900,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/file?name=<string>",
+							"raw": "{{api_url}}/file?name=<string>",
 							"host": [
-								"{{baseUrl}}"
+								"{{api_url}}"
 							],
 							"path": [
 								"file"
