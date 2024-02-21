@@ -51,8 +51,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
 });
 
-builder.Services.AddHealthChecks()
-    //.AddSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;",
+builder.Services
+    .AddHealthChecks()
+    .AddSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;")
     //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
     .AddCheck<DatabaseHealthCheck>("Database");
 
