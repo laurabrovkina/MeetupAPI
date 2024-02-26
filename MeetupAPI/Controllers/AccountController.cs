@@ -1,5 +1,4 @@
-﻿using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
+﻿using MeetupAPI.Entities;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -8,110 +7,109 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace MeetupAPI.Controllers
+namespace MeetupAPI.Controllers;
+
+[Route("api/account")]
+public class AccountController : ControllerBase
 {
-    [Route("api/account")]
-    public class AccountController : ControllerBase
+    private readonly MeetupContext _meetupContext;
+    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IJwtProvider _jwtProvider;
+    private readonly IAuthorizationService _authorizationService;
+
+    public AccountController(MeetupContext meetupContext,
+        IPasswordHasher<User> passwordHasher,
+        IJwtProvider jwtProvider,
+        IAuthorizationService authorizationService)
     {
-        private readonly MeetupContext _meetupContext;
-        private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IJwtProvider _jwtProvider;
-        private readonly IAuthorizationService _authorizationService;
+        _meetupContext = meetupContext;
+        _passwordHasher = passwordHasher;
+        _jwtProvider = jwtProvider;
+        _authorizationService = authorizationService;
+    }
 
-        public AccountController(MeetupContext meetupContext,
-            IPasswordHasher<User> passwordHasher,
-            IJwtProvider jwtProvider,
-            IAuthorizationService authorizationService)
+    [HttpPost("login")]
+    public ActionResult Login([FromBody]RegisterUserDto registerUserDto)
+    {
+        var user = _meetupContext.Users
+            .Include(user => user.Role)
+            .FirstOrDefault(user => user.Email == registerUserDto.Email);
+
+        if (user == null)
         {
-            _meetupContext = meetupContext;
-            _passwordHasher = passwordHasher;
-            _jwtProvider = jwtProvider;
-            _authorizationService = authorizationService;
+            return BadRequest("Invalid username or password");
         }
 
-        [HttpPost("login")]
-        public ActionResult Login([FromBody]RegisterUserDto registerUserDto)
+        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserDto.Password);
+
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
         {
-            var user = _meetupContext.Users
-                .Include(user => user.Role)
-                .FirstOrDefault(user => user.Email == registerUserDto.Email);
-
-            if (user == null)
-            {
-                return BadRequest("Invalid username or password");
-            }
-
-            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserDto.Password);
-
-            if (passwordVerificationResult == PasswordVerificationResult.Failed)
-            {
-                return BadRequest("Invalid username or password");
-            }
-
-            var token = _jwtProvider.GenerateJwtToken(user);
-
-            return Ok(token);
+            return BadRequest("Invalid username or password");
         }
 
-        [HttpPost("register")]
-        public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+        var token = _jwtProvider.GenerateJwtToken(user);
+
+        return Ok(token);
+    }
+
+    [HttpPost("register")]
+    public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+    {
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var newUser = new User
-            {
-                Email = registerUserDto.Email,
-                Nationality = registerUserDto.Nationality,
-                DateOfBirth = registerUserDto.DateOfBirth,
-                PasswordHash = null,
-                RoleId = registerUserDto.RoleId
-            };
-
-            var passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
-            newUser.PasswordHash = passwordHash;
-
-            _meetupContext.Users.Add(newUser);
-            _meetupContext.SaveChanges();
-
-            return Ok();
+            return BadRequest(ModelState);
         }
 
-        [HttpPut("edit")]
-        [Authorize(Roles = "Admin,Moderator")]
-        public ActionResult Edit([FromBody] UpdateUserDto updateUserDto)
+        var newUser = new User
         {
-            var user = _meetupContext.Users
-                .FirstOrDefault(x => x.Email == updateUserDto.Email);
+            Email = registerUserDto.Email,
+            Nationality = registerUserDto.Nationality,
+            DateOfBirth = registerUserDto.DateOfBirth,
+            PasswordHash = null,
+            RoleId = registerUserDto.RoleId
+        };
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+        var passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
+        newUser.PasswordHash = passwordHash;
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        _meetupContext.Users.Add(newUser);
+        _meetupContext.SaveChanges();
 
-            user.FirstName = updateUserDto.FirstName;
-            user.LastName = updateUserDto.LastName;
-            user.Nationality = updateUserDto.Nationality;
-            user.DateOfBirth = updateUserDto.DateOfBirth;
-            user.RoleId= updateUserDto.RoleId;
+        return Ok();
+    }
 
-            if (updateUserDto.Password is not null
-                && updateUserDto.Password == updateUserDto.ConfirmPassword)
-            {
-                var passwordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
-                user.PasswordHash = passwordHash;
-            }
+    [HttpPut("edit")]
+    [Authorize(Roles = "Admin,Moderator")]
+    public ActionResult Edit([FromBody] UpdateUserDto updateUserDto)
+    {
+        var user = _meetupContext.Users
+            .FirstOrDefault(x => x.Email == updateUserDto.Email);
 
-            _meetupContext.SaveChanges();
-
-            return NoContent();
+        if (user == null)
+        {
+            return NotFound();
         }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        user.FirstName = updateUserDto.FirstName;
+        user.LastName = updateUserDto.LastName;
+        user.Nationality = updateUserDto.Nationality;
+        user.DateOfBirth = updateUserDto.DateOfBirth;
+        user.RoleId= updateUserDto.RoleId;
+
+        if (updateUserDto.Password is not null
+            && updateUserDto.Password == updateUserDto.ConfirmPassword)
+        {
+            var passwordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
+            user.PasswordHash = passwordHash;
+        }
+
+        _meetupContext.SaveChanges();
+
+        return NoContent();
     }
 }
