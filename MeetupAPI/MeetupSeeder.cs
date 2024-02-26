@@ -3,86 +3,85 @@ using System.Collections.Generic;
 using System.Linq;
 using MeetupAPI.Entities;
 
-namespace MeetupAPI
+namespace MeetupAPI;
+
+public class MeetupSeeder
 {
-    public class MeetupSeeder
+    private readonly MeetupContext _meetupContext;
+
+    public MeetupSeeder(MeetupContext meetupContext)
     {
-        private readonly MeetupContext _meetupContext;
+        _meetupContext = meetupContext;
+    }
 
-        public MeetupSeeder(MeetupContext meetupContext)
+    public void Seed()
+    {
+        if (_meetupContext.Database.CanConnect())
         {
-            _meetupContext = meetupContext;
-        }
-
-        public void Seed()
-        {
-            if (_meetupContext.Database.CanConnect())
+            if (!_meetupContext.Meetups.Any())
             {
-                if (!_meetupContext.Meetups.Any())
-                {
-                    InsertSampleData();
-                }
+                InsertSampleData();
             }
         }
+    }
 
-        private void InsertSampleData()
+    private void InsertSampleData()
+    {
+        var meetups = new List<Meetup>
         {
-            var meetups = new List<Meetup>
+            new Meetup
             {
-                new Meetup
+                Name = "Web summit",
+                Date = DateTime.Now.AddDays(7),
+                IsPrivate = false,
+                Organizer = "Microsoft",
+                Location = new Location
                 {
-                    Name = "Web summit",
-                    Date = DateTime.Now.AddDays(7),
-                    IsPrivate = false,
-                    Organizer = "Microsoft",
-                    Location = new Location
-                    {
-                        City = "Krakow",
-                        Street = "Szeroka 33/5",
-                        PostCode = "31-337"
-                    },
-                    Lectures = new List<Lecture>
-                    {
-                        new Lecture
-                        {
-                            Author = "Bob Clark",
-                            Topic = "Modern browsers",
-                            Description = "Deep dive into V8"
-                        }
-                    }
+                    City = "Krakow",
+                    Street = "Szeroka 33/5",
+                    PostCode = "31-337"
                 },
-                new Meetup
+                Lectures = new List<Lecture>
                 {
-                    Name = "4Devs",
-                    Date = DateTime.Now.AddDays(7),
-                    IsPrivate = false,
-                    Organizer = "KGD",
-                    Location = new Location
+                    new Lecture
                     {
-                        City = "Warszawa",
-                        Street = "Chmielna 33/5",
-                        PostCode = "00-007"
-                    },
-                    Lectures = new List<Lecture>
-                    {
-                        new Lecture
-                        {
-                            Author = "Will Smith",
-                            Topic = "React.js",
-                            Description = "Redux introduction"
-                        },
-                        new Lecture
-                        {
-                            Author = "John Cena",
-                            Topic = "Angular store",
-                            Description = "Ngxs in practice"
-                        }
+                        Author = "Bob Clark",
+                        Topic = "Modern browsers",
+                        Description = "Deep dive into V8"
                     }
+                }
+            },
+            new Meetup
+            {
+                Name = "4Devs",
+                Date = DateTime.Now.AddDays(7),
+                IsPrivate = false,
+                Organizer = "KGD",
+                Location = new Location
+                {
+                    City = "Warszawa",
+                    Street = "Chmielna 33/5",
+                    PostCode = "00-007"
                 },
-            };
+                Lectures = new List<Lecture>
+                {
+                    new Lecture
+                    {
+                        Author = "Will Smith",
+                        Topic = "React.js",
+                        Description = "Redux introduction"
+                    },
+                    new Lecture
+                    {
+                        Author = "John Cena",
+                        Topic = "Angular store",
+                        Description = "Ngxs in practice"
+                    }
+                }
+            },
+        };
 
-            _meetupContext.AddRange(meetups);
-            _meetupContext.SaveChanges();
-        }
+        _meetupContext.AddRange(meetups);
+        _meetupContext.SaveChanges();
     }
 }

@@ -1,9 +1,8 @@
 ﻿using MeetupAPI.Entities;
 
-namespace MeetupAPI.Identity
+namespace MeetupAPI.Identity;
+
+public interface IJwtProvider
 {
-    public interface IJwtProvider
-    {
-        string GenerateJwtToken(User user);
-    }
+    string GenerateJwtToken(User user);
 }

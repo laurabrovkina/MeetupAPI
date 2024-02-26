@@ -3,20 +3,19 @@ using FluentValidation;
 using MeetupAPI.Entities;
 using MeetupAPI.Models;
 
-namespace MeetupAPI.Validators
+namespace MeetupAPI.Validators;
+
+public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
 {
-    public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
+    public RegisterUserValidator(MeetupContext meetupContext)
     {
-        public RegisterUserValidator(MeetupContext meetupContext)
+        RuleFor(x => x.Email).Custom((value, context) =>
         {
-            RuleFor(x => x.Email).Custom((value, context) =>
+            var userAlreadyExists = meetupContext.Users.Any(user => user.Email == value);
+            if (userAlreadyExists)
             {
-                var userAlreadyExists = meetupContext.Users.Any(user => user.Email == value);
-                if (userAlreadyExists)
-                {
-                    context.AddFailure("Email","This email address is taken");
-                }
-            });
-        }
+                context.AddFailure("Email","This email address is taken");
+            }
+        });
     }
 }

@@ -7,105 +7,104 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace MeetupAPI.Controllers
+namespace MeetupAPI.Controllers;
+
+[Route("api/meetup/{meetupName}/lecture")]
+public class LectureController : ControllerBase
 {
-    [Route("api/meetup/{meetupName}/lecture")]
-    public class LectureController : ControllerBase
+    private readonly MeetupContext _meetupContext;
+    private readonly IMapper _mapper;
+    private readonly ILogger<LectureController> _logger;
+
+    public LectureController(MeetupContext meetupContext, IMapper mapper, ILogger<LectureController> logger)
     {
-        private readonly MeetupContext _meetupContext;
-        private readonly IMapper _mapper;
-        private readonly ILogger<LectureController> _logger;
+        _meetupContext = meetupContext;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-        public LectureController(MeetupContext meetupContext, IMapper mapper, ILogger<LectureController> logger)
+    [HttpDelete]
+    public ActionResult Delete(string meetupName)
+    {
+        var meetup = _meetupContext.Meetups
+            .Include(m => m.Lectures)
+            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
+
+        if (meetup == null)
         {
-            _meetupContext = meetupContext;
-            _mapper = mapper;
-            _logger = logger;
+            return NotFound();
         }
 
-        [HttpDelete]
-        public ActionResult Delete(string meetupName)
+        _logger.LogWarning($"The lectures for meetup {meetup.Name} have been removed.");
+
+        _meetupContext.Lectures.RemoveRange(meetup.Lectures);
+        _meetupContext.SaveChanges();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(string meetupName, int id)
+    {
+        var meetup = _meetupContext.Meetups
+            .Include(m => m.Lectures)
+            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
+
+        if (meetup == null)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
-            {
-                return NotFound();
-            }
-
-            _logger.LogWarning($"The lectures for meetup {meetup.Name} have been removed.");
-
-            _meetupContext.Lectures.RemoveRange(meetup.Lectures);
-            _meetupContext.SaveChanges();
-
-            return NoContent();
+            return NotFound();
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(string meetupName, int id)
+        var lecture = meetup.Lectures.FirstOrDefault(l => l.Id == id);
+
+        if (lecture == null)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
-            {
-                return NotFound();
-            }
-
-            var lecture = meetup.Lectures.FirstOrDefault(l => l.Id == id);
-
-            if (lecture == null)
-            {
-                return NotFound();
-            }
-
-            _meetupContext.Lectures.Remove(lecture);
-            _meetupContext.SaveChanges();
-
-            return NoContent();
+            return NotFound();
         }
 
-        [HttpGet]
-        public ActionResult Get(string meetupName)
+        _meetupContext.Lectures.Remove(lecture);
+        _meetupContext.SaveChanges();
+
+        return NoContent();
+    }
+
+    [HttpGet]
+    public ActionResult Get(string meetupName)
+    {
+        var meetup = _meetupContext.Meetups
+            .Include(m => m.Lectures)
+            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
+
+        if (meetup == null)
         {
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
-            {
-                return NotFound();
-            }
-
-            var lectures = _mapper.Map<List<LectureDto>>(meetup.Lectures);
-
-            return Ok(lectures);
+            return NotFound();
         }
 
-        [HttpPost]
-        public ActionResult Post(string meetupName, [FromBody] LectureDto model)
+        var lectures = _mapper.Map<List<LectureDto>>(meetup.Lectures);
+
+        return Ok(lectures);
+    }
+
+    [HttpPost]
+    public ActionResult Post(string meetupName, [FromBody] LectureDto model)
+    {
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var meetup = _meetupContext.Meetups
-                .Include(m => m.Lectures)
-                .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
-
-            if (meetup == null)
-            {
-                return NotFound();
-            }
-
-            var lecture = _mapper.Map<Lecture>(model);
-            meetup.Lectures.Add(lecture);
-            _meetupContext.SaveChanges();
-
-            return Created($"api/meetup/{meetupName}", null);
+            return BadRequest(ModelState);
         }
+        var meetup = _meetupContext.Meetups
+            .Include(m => m.Lectures)
+            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
+
+        if (meetup == null)
+        {
+            return NotFound();
+        }
+
+        var lecture = _mapper.Map<Lecture>(model);
+        meetup.Lectures.Add(lecture);
+        _meetupContext.SaveChanges();
+
+        return Created($"api/meetup/{meetupName}", null);
     }
 }

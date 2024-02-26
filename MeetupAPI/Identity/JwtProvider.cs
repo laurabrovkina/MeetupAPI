@@ -1,5 +1,4 @@
 ﻿using MeetupAPI.Entities;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -7,49 +6,48 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace MeetupAPI.Identity
+namespace MeetupAPI.Identity;
+
+public class JwtProvider : IJwtProvider
 {
-    public class JwtProvider : IJwtProvider
+    private readonly JwtOptions _jwtOptions;
+
+    public JwtProvider(JwtOptions jwtOptions)
     {
-        private readonly JwtOptions _jwtOptions;
+        _jwtOptions = jwtOptions;
+    }
 
-        public JwtProvider(JwtOptions jwtOptions)
+    public string GenerateJwtToken(User user)
+    {
+        var claims = new List<Claim>
         {
-            _jwtOptions = jwtOptions;
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy")),
+        };
+
+        if (!string.IsNullOrEmpty(user.Nationality))
+        {
+            claims.Add(
+                new Claim("Nationality", user.Nationality)
+                );
         }
 
-        public string GenerateJwtToken(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.RoleName),
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy")),
-            };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            if (!string.IsNullOrEmpty(user.Nationality))
-            {
-                claims.Add(
-                    new Claim("Nationality", user.Nationality)
-                    );
-            }
+        var expires = DateTime.Now.AddDays(_jwtOptions.JwtExpireDays);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            _jwtOptions.JwtIssuer,
+            _jwtOptions.JwtIssuer,
+            claims,
+            expires: expires,
+            signingCredentials: creds
+       );
 
-            var expires = DateTime.Now.AddDays(_jwtOptions.JwtExpireDays);
-
-            var token = new JwtSecurityToken(
-                _jwtOptions.JwtIssuer,
-                _jwtOptions.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: creds
-           );
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
-        }
+        var tokenHandler = new JwtSecurityTokenHandler();
+        return tokenHandler.WriteToken(token);
     }
 }

@@ -3,25 +3,24 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Linq;
 
-namespace MeetupAPI.Filters
+namespace MeetupAPI.Filters;
+
+public class NationalityFilter : Attribute, IAuthorizationFilter
 {
-    public class NationalityFilter : Attribute, IAuthorizationFilter
+    private string[] _nationalities;
+
+    public NationalityFilter(string nationalities)
     {
-        private string[] _nationalities;
+        _nationalities = nationalities.Split(",");
+    }
 
-        public NationalityFilter(string nationalities)
+    public void OnAuthorization(AuthorizationFilterContext context)
+    {
+        var nationality = context.HttpContext.User.FindFirst(c => c.Type == "Nationality").Value;
+
+        if (!_nationalities.Any(c => c == nationality))
         {
-            _nationalities = nationalities.Split(",");
-        }
-
-        public void OnAuthorization(AuthorizationFilterContext context)
-        {
-            var nationality = context.HttpContext.User.FindFirst(c => c.Type == "Nationality").Value;
-
-            if (!_nationalities.Any(c => c == nationality))
-            {
-                context.Result = new StatusCodeResult(403);
-            }
+            context.Result = new StatusCodeResult(403);
         }
     }
 }
