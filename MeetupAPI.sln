@@ -11,11 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meetup.UnitTests", "Meetup.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meetup.IntegrationTests", "Meetup.IntegrationTests\Meetup.IntegrationTests.csproj", "{D052807A-4BC1-4DF4-865F-60944D3FBB97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meetup.Sdk", "Meetup.Sdk\Meetup.Sdk.csproj", "{14CFD718-FDEF-4E6D-BFD0-9B1903930ED5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meetup.Contracts", "Meetup.Contracts\Meetup.Contracts.csproj", "{2BB72AF6-6BB0-46A7-89BF-DCCB93B7D90D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meetup.Sdk.Sample", "Meetup.Sdk.Sample\Meetup.Sdk.Sample.csproj", "{7C62B655-6350-4DD7-930A-A23B4069D088}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
