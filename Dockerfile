@@ -1,25 +1,17 @@
-# We choose exact tag (not 'latest'), to be sure that new version wont break creating image
-FROM mcr.microsoft.com/mssql/server:2017-CU17-ubuntu
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+# Copy everything
+COPY . ./
 
-# Copy initialization scripts
-COPY . /usr/src/app
+# Build and publish a release
+RUN dotnet publish MeetupAPI.sln -c Release -o out
 
-# Grant permissions for the run-initialization script to be executable
-RUN chmod +x /usr/src/app/run-initialization.sh
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build-env /app/out .
 
-# Set environment variables, not to have to write them with docker run command
-# Note: make sure that your password matches what is in the run-initialization script 
-ENV SA_PASSWORD CorrectHorseBatteryStapleFor$
-ENV ACCEPT_EULA Y
-ENV MSSQL_PID Express
-
-# Expose port 1433 in case accesing from other container
-EXPOSE 1433
-
-# Run Microsoft SQl Server and initialization script (at the same time)
-# Note: If you want to start MsSQL only (without initialization script) you can comment bellow line out, CMD entry from base image will be taken
-CMD /bin/bash ./entrypoint.sh
+ENTRYPOINT ["dotnet", "MeetupAPI.dll"]

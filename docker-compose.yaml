@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+
+  api:
+    build: .
+    user: root
+    environment:
+      - MeetupAPI_Database__ConnectionString=Server=localhost,14033;User ID=sa;Password=CorrectHorseBatteryStapleFor$;Database=MeetupDb;

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using MeetupAPI;
@@ -129,11 +129,14 @@ app.UseEndpoints(endpoints =>
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
 
-    //map healthcheck ui endpoing - default is /healthchecks-ui/
-    endpoints.MapHealthChecksUI();
+    endpoints.MapHealthChecksUI(setup =>
+    {
+        setup.UIPath = "/show-health-ui"; // this is ui path in your browser
+        setup.ApiPath = "/health-ui-api"; // the UI ( spa app )  use this path to get information from the store ( this is NOT the healthz path, is internal ui api )
+    });
+
+    endpoints.MapControllers();
 });
-
-
 
 //SeedDatabase();
 
