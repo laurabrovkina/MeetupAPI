@@ -4,6 +4,8 @@ services:
 
   api:
     build: .
-    user: root
     environment:
       - MeetupAPI_Database__ConnectionString=Server=localhost,14033;User ID=sa;Password=CorrectHorseBatteryStapleFor$;Database=MeetupDb;
+    ports:
+      - "5001:443"
+      - "5000:80"

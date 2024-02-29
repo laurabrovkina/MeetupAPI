@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
+using Humanizer.Configuration;
 using MeetupAPI;
 using MeetupAPI.Authorization;
 using MeetupAPI.Entities;
@@ -25,6 +26,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var jwtOptions = new JwtOptions();
+
+builder.Services.Configure<DbOptions>(
+    builder.Configuration.GetSection("ConnectionStrings"));
+var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
+
 builder.Configuration.GetSection("jwt").Bind(jwtOptions);
 
 builder.Services.AddSingleton(jwtOptions);
@@ -53,8 +59,6 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services
     .AddHealthChecks()
-    .AddSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;")
-    //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
     .AddCheck<DatabaseHealthCheck>("Database");
 
 //adding healthchecks UI
@@ -78,7 +82,7 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>()
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
 builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
-builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
+builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer(myDbConfig));
 builder.Services.AddScoped<MeetupSeeder>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c =>
