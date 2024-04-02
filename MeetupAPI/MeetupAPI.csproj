@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Meetup.Aspire\Meetup.Aspire.ServiceDefaults\Meetup.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Meetup.Contracts\Meetup.Contracts.csproj" />
   </ItemGroup>
 

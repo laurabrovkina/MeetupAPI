@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using MeetupAPI;
@@ -24,6 +24,8 @@ using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 var jwtOptions = new JwtOptions();
 builder.Configuration.GetSection("jwt").Bind(jwtOptions);
 
@@ -92,6 +94,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseResponseCaching();
 app.UseStaticFiles();
