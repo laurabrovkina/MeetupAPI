@@ -74,6 +74,22 @@ docker run -p 14033:1433 -d db-meetup
 
 Next, you can establish a connection to the SQL Server using SQL Server Management Studio (SSMS). When doing so from your local machine, enter `localhost,14033` as the Server name. Opt for SQL Server Authentication and input the "sa" user along with the corresponding password specified in the Dockerfile.
 
+## Aspire
+The new feature of .NET 8 was introduced using Visual Studio tools to add default projects `Meetup.Aspire.AppHost` and `Meetup.Aspire.ServiceDefaults` to run Aspire succesfully. 
+To run Aspire, you would need to run specifically `Meetup.Aspire.AppHost`:
+![Aspire Dashboard](./Img/image.png)
+There are resources, metrics, traces (see the picture above), and logs and they all are preset and customisable for particular needs in your application.
+Also, it is possible to generate `manifest.json` file describing everything that is happening in your applications and how Aspire wires everything up. Then this file might be taken and translated to any cloud environment, IaC that is required. This command creates a manifest file:
+```
+dotnet run --publisher manifest --output-path manifest.json
+```
+![Logs](./Img/image-1.png)
+
+There is a command to create a docker compose file using aspirate library (it is in prerelease now):
+```
+aspirate generate --output-format compose
+```
+
 ## Health Checks
 * There is a good [article](https://rmauro.dev/adding-health-checks-ui/) how to set up UI client for a health check. 
 * Meetup project needs to be sure that db connection is up and running correctly.

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using MeetupAPI;
@@ -8,6 +8,7 @@ using MeetupAPI.Filters;
 using MeetupAPI.Health;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
+using MeetupAPI.Options;
 using MeetupAPI.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -24,8 +25,13 @@ using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 var jwtOptions = new JwtOptions();
 builder.Configuration.GetSection("jwt").Bind(jwtOptions);
+builder.Services.Configure<DbOptions>(
+    builder.Configuration.GetSection("ConnectionStrings"));
+var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
 
 builder.Services.AddSingleton(jwtOptions);
 
@@ -53,7 +59,6 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services
     .AddHealthChecks()
-    .AddSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;")
     //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
     .AddCheck<DatabaseHealthCheck>("Database");
 
@@ -78,7 +83,7 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>()
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
 builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
-builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MeetupDb;Trusted_Connection=True;"));
+builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer(myDbConfig));
 builder.Services.AddScoped<MeetupSeeder>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c =>
@@ -92,6 +97,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseResponseCaching();
 app.UseStaticFiles();
@@ -132,8 +139,6 @@ app.UseEndpoints(endpoints =>
     //map healthcheck ui endpoing - default is /healthchecks-ui/
     endpoints.MapHealthChecksUI();
 });
-
-
 
 //SeedDatabase();
 
