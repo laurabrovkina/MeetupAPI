@@ -59,7 +59,6 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services
     .AddHealthChecks()
-    //.AddSqlServer(myDbConfig)
     //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
     .AddCheck<DatabaseHealthCheck>("Database");
 
