@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  meetupapi:
+    container_name: "meetupapi"
+    image: "meetupapi:latest"
+    environment:
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+    restart: unless-stopped
