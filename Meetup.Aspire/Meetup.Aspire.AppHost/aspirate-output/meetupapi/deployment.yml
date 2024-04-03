@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meetupapi
+spec:
+  minReadySeconds: 60
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meetupapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: meetupapi
+    spec:
+      containers:
+      - name: meetupapi
+        image: meetupapi:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: meetupapi-env
+      terminationGracePeriodSeconds: 180
