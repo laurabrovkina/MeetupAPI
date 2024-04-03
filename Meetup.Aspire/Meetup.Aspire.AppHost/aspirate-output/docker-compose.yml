@@ -6,4 +6,8 @@ services:
     environment:
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
       OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+      ConnectionStrings__MeetupDb: Server=localhost,14033;User ID=sa;Password=CorrectHorseBatteryStapleFor$;Database=MeetupDb;Trusted_Connection=False;MultipleActiveResultSets=true
     restart: unless-stopped
+    ports:
+      - "5001:443"
+      - "5000:80"

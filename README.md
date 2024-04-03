@@ -85,6 +85,11 @@ dotnet run --publisher manifest --output-path manifest.json
 ```
 ![Logs](./Img/image-1.png)
 
+There is a command to create a docker compose file using aspirate library (it is in prerelease now):
+```
+aspirate generate --output-format compose
+```
+
 ## Health Checks
 * There is a good [article](https://rmauro.dev/adding-health-checks-ui/) how to set up UI client for a health check. 
 * Meetup project needs to be sure that db connection is up and running correctly.
