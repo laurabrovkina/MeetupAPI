@@ -56,6 +56,10 @@ The project file could be found in `MeetupAPI.MinimalApi` folder. Swagger docume
 * `started-with-mediatr` - this branch shows how to migrate to MediatR and use handlers, separating the project into vertical slices. If the functionality is just like that it might not have a lot of value. But with MediatR there are some interesting features become available where
 we can set up behavior, and emit events using MediatR build-in functionality. To be continued...
 
+* `ardalis-apiEndpoint` - this branch to try out Ardalis ApiEndpoint [gitHub link](https://github.com/ardalis/ApiEndpoints) that we can use to rewrite MVC endpoints to suggested templates.
+The change is easy to apply and solution looks much cleaner. That's how it is in Swagger:
+![screenshot](./Img/ardalis-api-endpoint.jpg)
+
 ## Dockerization
 * The original idea was found on github, [Mssql-docker-initialization-demo](https://github.com/tometchy/Mssql-docker-initialization-demo):
 
