@@ -3,6 +3,7 @@ using MeetupAPI.ApiEndpoints;
 using MeetupAPI.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 
 public class AccountRegister : EndpointBaseSync
@@ -20,7 +21,10 @@ public class AccountRegister : EndpointBaseSync
     }
 
     [HttpPost("/register")]
-
+    [SwaggerOperation(
+        Summary = "Register new user",
+        Description = "Register new user",
+        Tags = new[] { "AccountRegister", "TestEndpoint" })]
     public override ActionResult<AccountRegisterResult> Handle(AccountRegisterRequest request)
     {
         var newUser = new User
