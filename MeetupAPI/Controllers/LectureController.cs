@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using AutoMapper;
 using MeetupAPI.Entities;
+using MeetupAPI.ErrorHandling.Exceptions;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +34,7 @@ public class LectureController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
         _logger.LogWarning($"The lectures for meetup {meetup.Name} have been removed.");
@@ -52,14 +54,14 @@ public class LectureController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
         var lecture = meetup.Lectures.FirstOrDefault(l => l.Id == id);
 
         if (lecture == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Lecture with name {lecture} has not been found");
         }
 
         _meetupContext.Lectures.Remove(lecture);
@@ -77,7 +79,7 @@ public class LectureController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
         var lectures = _mapper.Map<List<LectureDto>>(meetup.Lectures);
@@ -90,7 +92,11 @@ public class LectureController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            var errors = ModelState.Select(x => x.Value.Errors)
+                           .Where(y => y.Count > 0)
+                           .ToList();
+
+            throw new ApiResponseException(HttpStatusCode.BadRequest, errors.ToString());
         }
         var meetup = _meetupContext.Meetups
             .Include(m => m.Lectures)
@@ -98,7 +104,7 @@ public class LectureController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
         var lecture = _mapper.Map<Lecture>(model);
