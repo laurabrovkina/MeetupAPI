@@ -4,6 +4,7 @@ using HealthChecks.UI.Client;
 using MeetupAPI;
 using MeetupAPI.Authorization;
 using MeetupAPI.Entities;
+using MeetupAPI.ErrorHandling;
 using MeetupAPI.Filters;
 using MeetupAPI.Health;
 using MeetupAPI.Identity;
@@ -121,6 +122,7 @@ else
 
 IdentityModelEventSource.ShowPII = true;
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseRouting();
