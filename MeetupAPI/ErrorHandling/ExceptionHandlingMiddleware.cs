@@ -30,9 +30,13 @@ public class ExceptionHandlingMiddleware
         {
             await HandleExceptions(httpContext, (int)ex.StatusCode, ex.Data, ex.Message);
         }
+        catch(ArgumentNullException ex)
+        {
+            await HandleExceptions(httpContext, StatusCodes.Status500InternalServerError, ex.Data, ex.Message);
+        }
         catch (Exception ex)
         {
-            await HandleExceptions(httpContext,StatusCodes.Status500InternalServerError, ex.Data);
+            await HandleExceptions(httpContext, StatusCodes.Status500InternalServerError, ex.Data);
         }
     }
 
@@ -44,6 +48,7 @@ public class ExceptionHandlingMiddleware
             detail: errorMessage);
 
         AddVersionAndRequestMinimumInformationToExtensions(problemDetails);
+        AddAdditionalDataToProblemDetail(problemDetails, additionalData);
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, options: null, "application/problem+json");
     }
