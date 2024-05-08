@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
+using MeetupAPI.ErrorHandling.Exceptions;
+using System.Net;
 
 namespace MeetupAPI.Controllers;
 
@@ -37,9 +39,9 @@ public class MeetupController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            ErrorMessages.BadRequestMessage(query, ModelState);
         }
-        
+
         var baseQuery = _meetupContext.Meetups
             .Include(m => m.Location)
             .Where(m => query.SearchPhrase == null ||
@@ -90,7 +92,7 @@ public class MeetupController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
         }
 
         var meetupDto = _mapper.Map<MeetupDetailsDto>(meetup);
@@ -103,7 +105,7 @@ public class MeetupController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            ErrorMessages.BadRequestMessage(model, ModelState);
         }
 
         var meetup = _mapper.Map<Meetup>(model);
@@ -127,19 +129,19 @@ public class MeetupController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
         }
 
         var authorizationResult = _authorizationService.AuthorizeAsync(User, meetup, new ResourceOperationRequirement(OperationType.Update)).Result;
 
         if (!authorizationResult.Succeeded)
         {
-            return Forbid();
+            throw new ApiResponseException(HttpStatusCode.Forbidden, "Forbidden");
         }
-        
+
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            ErrorMessages.BadRequestMessage(model, ModelState);
         }
 
         meetup.Name = model.Name;
@@ -161,14 +163,14 @@ public class MeetupController : ControllerBase
 
         if (meetup == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
         }
 
         var authorizationResult = _authorizationService.AuthorizeAsync(User, meetup, new ResourceOperationRequirement(OperationType.Delete)).Result;
 
         if (!authorizationResult.Succeeded)
         {
-            return Forbid();
+            throw new ApiResponseException(HttpStatusCode.Forbidden, "Forbidden");
         }
 
         _meetupContext.Remove(meetup);

@@ -92,11 +92,7 @@ public class LectureController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState.Select(x => x.Value.Errors)
-                           .Where(y => y.Count > 0)
-                           .ToList();
-
-            throw new ApiResponseException(HttpStatusCode.BadRequest, errors.ToString());
+            ErrorMessages.BadRequestMessage(model, ModelState);
         }
         var meetup = _meetupContext.Meetups
             .Include(m => m.Lectures)

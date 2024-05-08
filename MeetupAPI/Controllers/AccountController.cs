@@ -1,4 +1,5 @@
 ﻿using MeetupAPI.Entities;
+using MeetupAPI.ErrorHandling.Exceptions;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net;
 
 namespace MeetupAPI.Controllers;
 
@@ -15,17 +17,14 @@ public class AccountController : ControllerBase
     private readonly MeetupContext _meetupContext;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
-    private readonly IAuthorizationService _authorizationService;
 
     public AccountController(MeetupContext meetupContext,
         IPasswordHasher<User> passwordHasher,
-        IJwtProvider jwtProvider,
-        IAuthorizationService authorizationService)
+        IJwtProvider jwtProvider)
     {
         _meetupContext = meetupContext;
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
-        _authorizationService = authorizationService;
     }
 
     [HttpPost("login")]
@@ -37,14 +36,14 @@ public class AccountController : ControllerBase
 
         if (user == null)
         {
-            return BadRequest("Invalid username or password");
+            throw new ApiResponseException(HttpStatusCode.BadRequest, "Invalid username or password");
         }
 
         var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserDto.Password);
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
         {
-            return BadRequest("Invalid username or password");
+            throw new ApiResponseException(HttpStatusCode.BadRequest, "Invalid username or password");
         }
 
         var token = _jwtProvider.GenerateJwtToken(user);
@@ -57,7 +56,7 @@ public class AccountController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            ErrorMessages.BadRequestMessage(registerUserDto, ModelState);
         }
 
         var newUser = new User
@@ -87,12 +86,12 @@ public class AccountController : ControllerBase
 
         if (user == null)
         {
-            return NotFound();
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"User with email {updateUserDto.Email} has not been found");
         }
 
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            ErrorMessages.BadRequestMessage(updateUserDto, ModelState);
         }
 
         user.FirstName = updateUserDto.FirstName;
