@@ -24,12 +24,16 @@ public class MeetupController : ControllerBase
     private readonly MeetupContext _meetupContext;
     private readonly IMapper _mapper;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IMeetupApiMetrics _metrics;
 
-    public MeetupController(MeetupContext meetupContext, IMapper mapper, IAuthorizationService authorizationService)
+    public MeetupController(MeetupContext meetupContext, IMapper mapper,
+        IAuthorizationService authorizationService,
+        IMeetupApiMetrics metrics)
     {
         _meetupContext = meetupContext;
         _mapper = mapper;
         _authorizationService = authorizationService;
+        _metrics = metrics;
     }
 
     [HttpGet]
@@ -37,6 +41,8 @@ public class MeetupController : ControllerBase
     [AllowAnonymous]
     public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery]MeetupQuery query)
     {
+        using var _ = _metrics.MeasureRequestDuration();
+
         if (!ModelState.IsValid)
         {
             ErrorMessages.BadRequestMessage(query, ModelState);
@@ -85,6 +91,8 @@ public class MeetupController : ControllerBase
     //[Authorize(Policy = "AtLeast18")]
     public ActionResult<MeetupDetailsDto> Get(string name)
     {
+        using var _ = _metrics.MeasureRequestDuration();
+
         var meetup = _meetupContext.Meetups
             .Include(m => m.Location)
             .Include(m => m.Lectures)
@@ -101,8 +109,11 @@ public class MeetupController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin,Moderator")]
-    public ActionResult Post([FromBody]MeetupDto model)
+    public ActionResult Post([FromBody] MeetupDto model)
     {
+        using var _ = _metrics.MeasureRequestDuration();
+        _metrics.IncreaseMeetupRequestCount();
+
         if (!ModelState.IsValid)
         {
             ErrorMessages.BadRequestMessage(model, ModelState);
@@ -124,6 +135,8 @@ public class MeetupController : ControllerBase
     [HttpPut("{name}")]
     public ActionResult Put(string name, [FromBody] MeetupDto model)
     {
+        using var _ = _metrics.MeasureRequestDuration();
+
         var meetup = _meetupContext.Meetups
             .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == name.ToLower());
 
@@ -157,6 +170,8 @@ public class MeetupController : ControllerBase
     [HttpDelete("{name}")]
     public ActionResult Delete(string name)
     {
+        using var _ = _metrics.MeasureRequestDuration();
+
         var meetup = _meetupContext.Meetups
             .Include(m => m.Location)
             .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == name.ToLower());
