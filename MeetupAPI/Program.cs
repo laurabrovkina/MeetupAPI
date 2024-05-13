@@ -19,9 +19,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using System;
 using System.Text;
 
@@ -33,6 +37,46 @@ builder.Configuration.GetSection("jwt").Bind(jwtOptions);
 builder.Services.Configure<DbOptions>(
     builder.Configuration.GetSection("ConnectionStrings"));
 var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
+
+builder.Logging.AddOpenTelemetry(x =>
+{
+    x.IncludeScopes = true;
+    x.IncludeFormattedMessage = true;
+});
+
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(x =>
+    {
+        x.AddRuntimeInstrumentation()
+            .AddMeter(
+            "Microsoft.AspNetCore.Hosting",
+            "Microsoft.AspNetCore.Server.Kestrel",
+            "System.Net.Http",
+            "MeetupAPI");
+    })
+    .WithTracing(x =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            x.SetSampler<AlwaysOnSampler>();
+        }
+
+        x.AddAspNetCoreInstrumentation()
+            .AddGrpcClientInstrumentation()
+            .AddHttpClientInstrumentation();
+    });
+
+builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
+builder.Services.ConfigureOpenTelemetryMeterProvider(metrics => metrics.AddOtlpExporter());
+builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
+
+builder.Services.ConfigureHttpClientDefaults(http =>
+{
+    http.AddStandardResilienceHandler();
+});
+
+builder.Services.AddMetrics();
+builder.Services.AddSingleton<IMeetupApiMetrics, MeetupApiMetrics>();
 
 builder.Services.AddSingleton(jwtOptions);
 
