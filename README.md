@@ -166,3 +166,33 @@ ___
 #### Kubernetes Deployment YAML File
 `deployment.yaml` was added as an example. More info on:
 [kubernetes-deployment-yaml](https://spacelift.io/blog/kubernetes-deployment-yaml)
+
+### Aspire Dashboard
+Using Open Telemetry for local development that shows all basic metrics and logging on Aspire dashboard. There is no need even to set up Aspire itself. We would need only a dashboard and it will run in a docker container as a standalone app. There are a couple of custom metrics introduced in the code in `MeetupApiMetrics` class on top of built-in metrics. `MeetupApiMetrics` has an implementation of counting how many times the API call was done (set on POST for `MeetupController`) and how long in ms that request lasts.
+To introduce dashboard all we need to run the docker command:
+```
+docker run --rm -it -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard mcr.microsoft.com/dotnet/nightly/aspire-dashboard:8.0.0-preview.6
+```
+- port 18888 is for the dashboard
+- port 4317 is for the exporter
+- use aspire-dashboard docker image
+Url is shown in docker and got to `http://localhost:18888`
+As it is still under preview you will need a token to log in:
+![aspire-docker](Img/aspire-docker.jpg)
+This token is passed to log into the aspire dashboard.
+![aspire_dashboard_login](Img/aspire_dashboard_login.jpg)
+There are different things you can see there:
+- Structure logs with traceparent
+![structure_logs](Img/structure_logs.jpg)
+- Traces to see all requests with durations and information about it
+![traces_with_details](Img/traces_with_details.jpg)
+- And mertics with count and duration
+![metrics](Img/metrics.jpg)
+The dashboard does not store any data if you concern about security.
+
+#### Additional settings
+You might change some settings in `launchSettings`
+- Set `OTEL_EXPORTER_OTLP_ENDPOINT` and use another endpoint to export your settings
+- `OTEL_METRIC_EXPORT_INTERVAL` set to 10 seconds (10000). For the great demo to see changes immediately it could be set to 1 second (1000)
+
+[Original idea](https://www.youtube.com/watch?v=617oVraGY_M&t=1s)
