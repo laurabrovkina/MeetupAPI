@@ -1,12 +1,11 @@
 using MeetupAPI.ErrorHandling.Exceptions;
-using MeetupAPI.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq;
 using System.Net;
 
 public static class ErrorMessages
 {
-    public static void BadRequestMessage(object model, ModelStateDictionary modelState)
+    public static void BadRequestMessage<T>(T model, ModelStateDictionary modelState)
     {
         var errors = modelState.Select(x => x.Value.Errors)
         .Where(y => y.Count > 0)
