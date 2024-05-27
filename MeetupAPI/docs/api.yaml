@@ -1,0 +1,404 @@
+openapi: 3.0.1
+info:
+  title: MeetupAPI
+  version: v1
+paths:
+  /api/account/login:
+    post:
+      tags:
+        - Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        '200':
+          description: OK
+  /api/account/register:
+    post:
+      tags:
+        - Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        '200':
+          description: OK
+  /api/account/edit:
+    put:
+      tags:
+        - Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: OK
+  /config/reload:
+    options:
+      tags:
+        - Config
+      responses:
+        '200':
+          description: OK
+  /file:
+    get:
+      tags:
+        - File
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  '/api/meetup/{meetupName}/lecture':
+    delete:
+      tags:
+        - Lecture
+      parameters:
+        - name: meetupName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    get:
+      tags:
+        - Lecture
+      parameters:
+        - name: meetupName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+        - Lecture
+      parameters:
+        - name: meetupName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LectureDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LectureDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LectureDto'
+      responses:
+        '200':
+          description: OK
+  '/api/meetup/{meetupName}/lecture/{id}':
+    delete:
+      tags:
+        - Lecture
+      parameters:
+        - name: meetupName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+  /api/meetup:
+    get:
+      tags:
+        - Meetup
+      parameters:
+        - name: SearchPhrase
+          in: query
+          schema:
+            type: string
+        - name: PageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: PageNumber
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: SortBy
+          in: query
+          schema:
+            type: string
+        - name: SortDirection
+          in: query
+          schema:
+            $ref: '#/components/schemas/SortDirection'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDtoPagedResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDtoPagedResult'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDtoPagedResult'
+    post:
+      tags:
+        - Meetup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+      responses:
+        '200':
+          description: OK
+  '/api/meetup/{name}':
+    get:
+      tags:
+        - Meetup
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDto'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDto'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MeetupDetailsDto'
+    put:
+      tags:
+        - Meetup
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/MeetupDto'
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+        - Meetup
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    LectureDto:
+      required:
+        - author
+        - topic
+      type: object
+      properties:
+        author:
+          minLength: 5
+          type: string
+        topic:
+          minLength: 5
+          type: string
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    MeetupDetailsDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        organizer:
+          type: string
+          nullable: true
+        date:
+          type: string
+          format: date-time
+        isPrivate:
+          type: boolean
+        city:
+          type: string
+          nullable: true
+        street:
+          type: string
+          nullable: true
+        postCode:
+          type: string
+          nullable: true
+        lectures:
+          type: array
+          items:
+            $ref: '#/components/schemas/LectureDto'
+          nullable: true
+      additionalProperties: false
+    MeetupDetailsDtoPagedResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeetupDetailsDto'
+          nullable: true
+        totalPages:
+          type: integer
+          format: int32
+        itemsFrom:
+          type: integer
+          format: int32
+        itemsTo:
+          type: integer
+          format: int32
+        totalItemsCount:
+          type: integer
+          format: int32
+      additionalProperties: false
+    MeetupDto:
+      required:
+        - name
+        - organizer
+      type: object
+      properties:
+        name:
+          minLength: 3
+          type: string
+        organizer:
+          minLength: 1
+          type: string
+        date:
+          type: string
+          format: date-time
+        isPrivate:
+          type: boolean
+      additionalProperties: false
+    RegisterUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        confirmPassword:
+          type: string
+          nullable: true
+        nationality:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          format: date-time
+          nullable: true
+        roleId:
+          type: integer
+          format: int32
+      additionalProperties: false
+    SortDirection:
+      enum:
+        - 0
+        - 1
+      type: integer
+      format: int32
+    UpdateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        confirmPassword:
+          type: string
+          nullable: true
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        nationality:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          format: date-time
+          nullable: true
+        roleId:
+          type: integer
+          format: int32
+      additionalProperties: false

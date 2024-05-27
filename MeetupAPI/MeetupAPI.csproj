@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateSwaggerFiles>true</GenerateSwaggerFiles>
+    <RootNamespace>$(MSBuildProject)</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +13,7 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.1" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Azure.Identity" Version="1.11.3" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspnetCore.StaticFiles" Version="2.2.0" />
@@ -22,7 +25,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="NSwag.MSBuild" Version="14.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +46,19 @@
   <ItemGroup>
     <Folder Include="ErrorHandling\Exceptions\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="docs\api.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="SwaggerPostBuildTarget" AfterTargets="PostBuildEvent">
+    <Exec Command="dotnet tool restore"></Exec>
+    <Exec Command="dotnet swagger tofile --yaml --output docs/api.yaml $(TargetPath) v1" />
+  </Target>
+  <Target Name="NSwag" AfterTargets="AfterBuild" Condition=" '$(GenerateSwaggerFiles)' == 'true'">
+    <Exec Command="$(NSwagExe_Net60) openapi2csclient /input:docs/api.yaml /output:docs/MeetupClient.cs /JsonLibrary:SystemTextJson /classname:{controller}Client /operationGenerationMode:MultipleClientsFromFirstTagAndPathSegments /generateOptionalParameters:true /wrapResponses:true /generateResponseClasses:true /responseClass:Response /exceptionClass:MeetupApiException /useBaseUrl:false /generateClientInterfaces:true /generateOptionalPropertiesAsNullable:true" />
+  </Target>
 
 </Project>
