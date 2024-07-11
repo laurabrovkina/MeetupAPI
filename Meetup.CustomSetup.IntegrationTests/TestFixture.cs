@@ -1,9 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using FluentAssertions;
-using FluentAssertions.Extensions;
-using Hangfire;
 using Moq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xunit;
 using MeetupAPI.Entities;
 using Microsoft.Extensions.Configuration;
+using MeetupAPI;
 
 namespace Meetup.CustomSetup.IntegrationTests;
 
@@ -40,7 +38,7 @@ public class TestFixture : IAsyncLifetime
         builder.Configuration.GetSection("ConnectionStrings")["MeetupDb"] = _dbContainer.ConnectionString;
         await RunMigration(_dbContainer.ConnectionString);
 
-        //builder.ConfigureServices();
+        builder.ConfigureServices();
         var services = builder.Services;
 
         // add any mock services here
