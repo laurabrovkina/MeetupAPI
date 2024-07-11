@@ -1,7 +1,9 @@
 ﻿using AutoBogus;
+using Xunit;
 
 namespace Meetup.CustomSetup.IntegrationTests;
 
+[Collection(nameof(TestFixture))]
 public class TestBase : IDisposable
 {
     public TestBase()
