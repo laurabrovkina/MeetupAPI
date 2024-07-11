@@ -1,6 +1,6 @@
-﻿using MediatR;
-using MeetupAPI.Entities;
+﻿using MeetupAPI.Entities;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Json;
 using static Meetup.CustomSetup.IntegrationTests.TestFixture;
 
 namespace Meetup.CustomSetup.IntegrationTests;
@@ -20,10 +20,10 @@ public class TestingServiceScope
         return service;
     }
 
-    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    public async Task<HttpResponseMessage> PostAsync<T>(T request, string url) where T : class
     {
-        var mediator = _scope.ServiceProvider.GetService<ISender>();
-        return await mediator.Send(request);
+        var httpClient = _scope.ServiceProvider.GetService<HttpClient>();
+        return await httpClient.PostAsJsonAsync(url, request);
     }
 
     public async Task<TEntity> FindAsync<TEntity>(params object[] keyValues)

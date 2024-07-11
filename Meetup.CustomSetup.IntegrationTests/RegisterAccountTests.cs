@@ -1,24 +1,31 @@
-﻿using Meetup.CustomSetup.IntegrationTests.FakeAccount;
+﻿using FluentAssertions;
+using Meetup.CustomSetup.IntegrationTests.FakeAccount;
+using MeetupAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Meetup.CustomSetup.IntegrationTests;
 
-public class RegisterAccountTests
+public class RegisterAccountTests : TestBase
 {
     [Fact]
-    public async Task can_add_new_recipe_to_db()
+    public async Task Create_ReturnsCreated_WhenRequestIsCorrect()
     {
         // Arrange
+        const string url = "/api/account/register";
         var testingServiceScope = new TestingServiceScope();
         var fakeAccount = new FakeAccountForRegisterUserDto().Generate();
 
         // Act
-        var command = new AddRecipe.Command(fakeAccount);
-        var recipeReturned = await testingServiceScope.SendAsync(command);
-        var recipeCreated = await testingServiceScope.ExecuteDbContextAsync(db => db.Recipes
-            .FirstOrDefaultAsync(r => r.Id == recipeReturned.Id));
+        await testingServiceScope.PostAsync<RegisterUserDto>(fakeAccount, url);
+
+        var accountCreated = await testingServiceScope.ExecuteDbContextAsync(db => db.Users
+            .FirstOrDefaultAsync());
 
         // Assert
-        recipeReturned.Email.Should().Be(fakeAccount.Email);
+        accountCreated.Email.Should().Be(fakeAccount.Email);
+        accountCreated.RoleId.Should().Be(fakeAccount.RoleId);
+        accountCreated.Nationality.Should().Be(fakeAccount.Nationality);
+        accountCreated.DateOfBirth.Should().Be(fakeAccount.DateOfBirth);
     }
 }
