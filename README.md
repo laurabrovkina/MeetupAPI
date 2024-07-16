@@ -120,6 +120,8 @@ we can set up behavior, and emit events using MediatR build-in functionality. To
 The change is easy to apply and solution looks much cleaner. That's how it is in Swagger:
 ![screenshot](./Img/ardalis-api-endpoint.jpg)
 
+* `integration-tests-custom` - this branch is about setting up integration tests using a custom setup instead of standard and heavy `WebApplicationFactory` - [Original link](https://wrapt.dev/blog/integration-tests-in-dotnet-without-webappfactory). There is still a problem with the `TestingServiceScope` class, but the whole idea is quite clear.
+
 ## Dockerization
 * The original idea was found on github, [Mssql-docker-initialization-demo](https://github.com/tometchy/Mssql-docker-initialization-demo):
 
