@@ -1,10 +1,9 @@
 ﻿using static MeetupAPI.MeetupApiMetrics;
 
-namespace MeetupAPI
+namespace MeetupAPI;
+
+public interface IMeetupApiMetrics
 {
-    public interface IMeetupApiMetrics
-    {
-        void IncreaseMeetupRequestCount();
-        TrackedRequestDuration MeasureRequestDuration();
-    }
+    void IncreaseMeetupRequestCount();
+    TrackedRequestDuration MeasureRequestDuration();
 }

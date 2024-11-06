@@ -4,10 +4,10 @@ namespace MeetupAPI.Entities;
 
 public class MeetupContext : DbContext
 {
-
     public MeetupContext(DbContextOptions<MeetupContext> options)
         : base(options)
-    { }
+    {
+    }
 
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
@@ -22,7 +22,7 @@ public class MeetupContext : DbContext
 
         modelBuilder.Entity<User>()
             .HasOne(u => u.Role);
-        
+
         modelBuilder.Entity<Meetup>()
             .HasOne(m => m.Location)
             .WithOne(l => l.Meetup)

@@ -1,4 +1,6 @@
-﻿using MeetupAPI.Entities;
+using System.Linq;
+using System.Net;
+using MeetupAPI.Entities;
 using MeetupAPI.ErrorHandling.Exceptions;
 using MeetupAPI.Identity;
 using MeetupAPI.Models;
@@ -6,17 +8,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Net;
 
 namespace MeetupAPI.Controllers;
 
 [Route("api/account")]
 public class AccountController : ControllerBase
 {
+    private readonly IJwtProvider _jwtProvider;
     private readonly MeetupContext _meetupContext;
     private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly IJwtProvider _jwtProvider;
 
     public AccountController(MeetupContext meetupContext,
         IPasswordHasher<User> passwordHasher,

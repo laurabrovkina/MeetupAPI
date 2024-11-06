@@ -1,7 +1,7 @@
-﻿using MeetupAPI.Entities;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using MeetupAPI.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MeetupAPI.Authorization;
 

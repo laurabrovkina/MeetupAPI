@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Dockerfile = Dockerfile
 		entrypoint.sh = entrypoint.sh
 		run-initialization.sh = run-initialization.sh
+		README.md = README.md
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Global

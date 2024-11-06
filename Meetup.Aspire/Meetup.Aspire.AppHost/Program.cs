@@ -1,5 +1,7 @@
+using Projects;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.MeetupAPI>("meetupapi");
+builder.AddProject<MeetupAPI>("meetupapi");
 
 builder.Build().Run();

@@ -1,10 +1,10 @@
+using System;
+using System.Collections;
+using System.Threading.Tasks;
 using MeetupAPI.ErrorHandling.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using System;
-using System.Collections;
-using System.Threading.Tasks;
 
 namespace MeetupAPI.ErrorHandling;
 
@@ -26,11 +26,11 @@ public class ExceptionHandlingMiddleware
         {
             await _next(httpContext);
         }
-        catch(ApiResponseException ex)
+        catch (ApiResponseException ex)
         {
             await HandleExceptions(httpContext, (int)ex.StatusCode, ex.Data, ex.Message);
         }
-        catch(ArgumentNullException ex)
+        catch (ArgumentNullException ex)
         {
             await HandleExceptions(httpContext, StatusCodes.Status500InternalServerError, ex.Data, ex.Message);
         }

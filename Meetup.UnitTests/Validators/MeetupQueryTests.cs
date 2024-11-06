@@ -1,15 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
 using FluentValidation.TestHelper;
 using MeetupAPI.Models;
 using MeetupAPI.Validators;
 using Xunit;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace Meetup.UnitTests;
 
 public class MeetupQueryTests
 {
-    private readonly MeetupQueryValidator _validator = new MeetupQueryValidator();
+    private readonly MeetupQueryValidator _validator = new();
 
     [Fact]
     public void Should_Not_Have_Validation_Error_For_Valid_Page_Size()
@@ -116,9 +116,12 @@ public class MeetupQueryTests
     [MemberData(nameof(InvalidSortByColumnNames))]
     public void Should_Throw_Error_For_Invalid_SortBy_Column_Names(string invalidSortByColumnNames)
     {
-        var allowedSortByColumnNames = new[] { nameof(MeetupAPI.Entities.Meetup.Date), 
-            nameof(MeetupAPI.Entities.Meetup.Organizer), 
-            nameof(MeetupAPI.Entities.Meetup.Name) };
+        var allowedSortByColumnNames = new[]
+        {
+            nameof(MeetupAPI.Entities.Meetup.Date),
+            nameof(MeetupAPI.Entities.Meetup.Organizer),
+            nameof(MeetupAPI.Entities.Meetup.Name)
+        };
 
         var sut = new MeetupQuery
         {
@@ -130,18 +133,18 @@ public class MeetupQueryTests
 
         var result = _validator.TestValidate(sut);
         result.ShouldHaveValidationErrorFor(x => x.SortBy)
-            .WithErrorMessage($"SortBy is optional or it has to be in ({ string.Join(",", allowedSortByColumnNames)})");
+            .WithErrorMessage($"SortBy is optional or it has to be in ({string.Join(",", allowedSortByColumnNames)})");
     }
 
     public static IEnumerable<object[]> InvalidSortByColumnNames()
     {
-        yield return new [] { "InvalidColumnName" };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.Location) };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.Id) };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
-        yield return new [] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
+        yield return new[] { "InvalidColumnName" };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Location) };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Id) };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
+        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
     }
 }
 

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Meetup.IntegrationTests;
 
@@ -12,7 +12,8 @@ public class FakePolicyEvaluator : IPolicyEvaluator
     public virtual async Task<AuthenticateResult> AuthenticateAsync(AuthorizationPolicy policy, HttpContext context)
     {
         var principal = new ClaimsPrincipal();
-        principal.AddIdentity(new ClaimsIdentity(new[] {
+        principal.AddIdentity(new ClaimsIdentity(new[]
+        {
             new Claim("Permission", "CanViewPage"),
             new Claim("Manager", "yes"),
             new Claim(ClaimTypes.Role, "Administrator"),

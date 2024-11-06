@@ -32,8 +32,8 @@ public class MeetupApiMetrics : IMeetupApiMetrics
 
     public class TrackedRequestDuration : IDisposable
     {
-        private readonly long _requestStartTime = TimeProvider.System.GetTimestamp();
         private readonly Histogram<double> _histogram;
+        private readonly long _requestStartTime = TimeProvider.System.GetTimestamp();
 
         public TrackedRequestDuration(Histogram<double> histogram)
         {

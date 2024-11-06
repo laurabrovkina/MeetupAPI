@@ -12,5 +12,5 @@ public class User
     public DateTime? DateOfBirth { get; set; }
     public string PasswordHash { get; set; }
     public int RoleId { get; set; }
-    public Role Role { get; set; } 
+    public Role Role { get; set; }
 }

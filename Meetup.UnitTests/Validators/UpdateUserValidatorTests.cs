@@ -1,7 +1,7 @@
 using FluentValidation.TestHelper;
-using MeetupAPI.Validators;
-using MeetupAPI.Models;
 using MeetupAPI.Entities;
+using MeetupAPI.Models;
+using MeetupAPI.Validators;
 using Xunit;
 
 namespace MeetupAPI.Facts.Validators;
@@ -9,8 +9,9 @@ namespace MeetupAPI.Facts.Validators;
 [Collection("Database collection")]
 public class UpdateUserValidatorTests
 {
-    DatabaseFixture _fixture;
     private readonly MeetupContext meetupContext;
+    private readonly DatabaseFixture _fixture;
+
     public UpdateUserValidatorTests(DatabaseFixture fixture)
     {
         _fixture = fixture;

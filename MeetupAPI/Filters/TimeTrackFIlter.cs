@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 namespace MeetupAPI.Filters;
 
 public class TimeTrackFilter : IActionFilter
 {
-    private Stopwatch _stopwatch;
     private readonly ILogger<TimeTrackFilter> _logger;
+    private Stopwatch _stopwatch;
 
     public TimeTrackFilter(ILogger<TimeTrackFilter> logger)
     {
@@ -16,7 +16,7 @@ public class TimeTrackFilter : IActionFilter
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
-       _stopwatch.Stop();
+        _stopwatch.Stop();
 
         var milliseconds = _stopwatch.ElapsedMilliseconds;
         var action = context.ActionDescriptor.DisplayName;

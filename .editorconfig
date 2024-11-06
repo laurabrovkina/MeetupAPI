@@ -1,0 +1,9 @@
+[*]
+end_of_line = lf
+
+[*.cs]
+max_line_length = 200
+
+# Disable some rules
+dotnet_diagnostic.IDE0290.severity = none
+dotnet_diagnostic.NU1903.severity = none

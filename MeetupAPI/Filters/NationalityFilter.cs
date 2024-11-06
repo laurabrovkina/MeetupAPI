@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace MeetupAPI.Filters;
 
 public class NationalityFilter : Attribute, IAuthorizationFilter
 {
-    private string[] _nationalities;
+    private readonly string[] _nationalities;
 
     public NationalityFilter(string nationalities)
     {

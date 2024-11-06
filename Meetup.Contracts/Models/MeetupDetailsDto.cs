@@ -10,5 +10,4 @@ public class MeetupDetailsDto
     public string Street { get; set; }
     public string PostCode { get; set; }
     public List<LectureDto> Lectures { get; set; }
-
 }

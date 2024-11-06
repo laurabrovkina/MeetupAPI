@@ -1,4 +1,9 @@
-﻿using DotNet.Testcontainers.Builders;
+using System.Data.Common;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
 using MeetupAPI.Entities;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
@@ -8,11 +13,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
-using System.Data.Common;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Testcontainers.MsSql;
 using Xunit;
 

@@ -1,10 +1,10 @@
-﻿using MeetupAPI.Entities;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MeetupAPI.Entities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MeetupAPI.Identity;
 
@@ -21,10 +21,10 @@ public class JwtProvider : IJwtProvider
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.RoleName),
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy")),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Role, user.Role.RoleName),
+            new(ClaimTypes.Name, user.Email),
+            new("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy"))
         };
 
         if (!string.IsNullOrEmpty(user.Nationality))
@@ -45,7 +45,7 @@ public class JwtProvider : IJwtProvider
             claims,
             expires: expires,
             signingCredentials: creds
-       );
+        );
 
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);

@@ -9,8 +9,8 @@ public class DatabaseFixture : IDisposable
     public DatabaseFixture()
     {
         _meetupContext = new MeetupContext((DbContextOptions<MeetupContext>?)
-        new DbContextOptionsBuilder<MeetupContext>()
-                .UseInMemoryDatabase(databaseName: "MeetupDb")
+            new DbContextOptionsBuilder<MeetupContext>()
+                .UseInMemoryDatabase("MeetupDb")
                 .Options);
 
         _meetupContext.Roles.Add(new Role { Id = 1, RoleName = "Moderator" });

@@ -1,18 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Security.Claims;
 using AutoMapper;
 using MeetupAPI.Authorization;
-using MeetupAPI.Filters;
 using MeetupAPI.Entities;
+using MeetupAPI.ErrorHandling.Exceptions;
+using MeetupAPI.Filters;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System;
-using MeetupAPI.ErrorHandling.Exceptions;
-using System.Net;
 
 namespace MeetupAPI.Controllers;
 
@@ -21,9 +21,9 @@ namespace MeetupAPI.Controllers;
 [ServiceFilter(typeof(TimeTrackFilter))]
 public class MeetupController : ControllerBase
 {
-    private readonly MeetupContext _meetupContext;
-    private readonly IMapper _mapper;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IMapper _mapper;
+    private readonly MeetupContext _meetupContext;
     private readonly IMeetupApiMetrics _metrics;
 
     public MeetupController(MeetupContext meetupContext, IMapper mapper,
@@ -39,7 +39,7 @@ public class MeetupController : ControllerBase
     [HttpGet]
     //[NationalityFilter("German,Russian")]
     [AllowAnonymous]
-    public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery]MeetupQuery query)
+    public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery] MeetupQuery query)
     {
         using var _ = _metrics.MeasureRequestDuration();
 
@@ -51,12 +51,12 @@ public class MeetupController : ControllerBase
         var baseQuery = _meetupContext.Meetups
             .Include(m => m.Location)
             .Where(m => query.SearchPhrase == null ||
-                        m.Organizer.ToLower().Contains(query.SearchPhrase.ToLower()) || 
+                        m.Organizer.ToLower().Contains(query.SearchPhrase.ToLower()) ||
                         m.Name.Contains(query.SearchPhrase.ToLower()));
 
         if (!string.IsNullOrEmpty(query.SortBy))
         {
-            var propertySelectors = new Dictionary<string, Expression<Func<Meetup, object>>>()
+            var propertySelectors = new Dictionary<string, Expression<Func<Meetup, object>>>
             {
                 { nameof(Meetup.Name), meetup => meetup.Name },
                 { nameof(Meetup.Date), meetup => meetup.Date },
@@ -69,18 +69,18 @@ public class MeetupController : ControllerBase
                 ? baseQuery.OrderBy(m => m.Date)
                 : baseQuery.OrderByDescending(m => m.Name);
         }
-        
+
         var meetups = baseQuery
             .Skip(query.PageSize * (query.PageNumber - 1))
             .Take(query.PageSize)
             .ToList();
 
         var totalCount = baseQuery.Count();
-        
+
         var meetupDtos = _mapper.Map<List<MeetupDetailsDto>>(meetups);
 
         var result = new PagedResult<MeetupDetailsDto>(meetupDtos, totalCount, query.PageNumber, query.PageSize);
-        
+
         return Ok(result);
     }
 

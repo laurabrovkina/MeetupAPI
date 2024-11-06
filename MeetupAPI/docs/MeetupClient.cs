@@ -1294,7 +1294,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase = null, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -1353,8 +1353,11 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase = null, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (searchPhrase == null)
+                throw new System.ArgumentNullException("searchPhrase");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -1369,10 +1372,7 @@ namespace MyNamespace
                     // Operation Path: "api/meetup"
                     urlBuilder_.Append("api/meetup");
                     urlBuilder_.Append('?');
-                    if (searchPhrase != null)
-                    {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("SearchPhrase")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(searchPhrase, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
-                    }
+                    urlBuilder_.Append(System.Uri.EscapeDataString("SearchPhrase")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(searchPhrase, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     if (pageSize != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("PageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
@@ -1926,6 +1926,29 @@ namespace MyNamespace
 
         [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
         public bool? IsPrivate { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MeetupQuery
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("searchPhrase")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string SearchPhrase { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
+        public int? PageSize { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageNumber")]
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
+        public int? PageNumber { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
+        public string SortBy { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sortDirection")]
+        public SortDirection? SortDirection { get; set; }
 
     }
 

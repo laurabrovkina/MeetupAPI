@@ -8,6 +8,7 @@ namespace MeetupAPI.Controllers;
 public class ConfigController : ControllerBase
 {
     private readonly IConfiguration _configuration;
+
     public ConfigController(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -26,5 +27,4 @@ public class ConfigController : ControllerBase
             return StatusCode(500);
         }
     }
-
 }
