@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
@@ -11,6 +13,7 @@ using MeetupAPI.Identity;
 using MeetupAPI.Models;
 using MeetupAPI.Options;
 using MeetupAPI.Validators;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -26,17 +29,15 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using System;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-var jwtOptions = new JwtOptions();
-builder.Configuration.GetSection("jwt").Bind(jwtOptions);
-builder.Services.Configure<DbOptions>(
-    builder.Configuration.GetSection("ConnectionStrings"));
+
+var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? new JwtOptions();
 var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("jwt"));
+builder.Services.Configure<DbOptions>(builder.Configuration.GetSection("ConnectionStrings"));
 
 builder.Logging.AddOpenTelemetry(x =>
 {
@@ -49,17 +50,14 @@ builder.Services.AddOpenTelemetry()
     {
         x.AddRuntimeInstrumentation()
             .AddMeter(
-            "Microsoft.AspNetCore.Hosting",
-            "Microsoft.AspNetCore.Server.Kestrel",
-            "System.Net.Http",
-            "MeetupAPI");
+                "Microsoft.AspNetCore.Hosting",
+                "Microsoft.AspNetCore.Server.Kestrel",
+                "System.Net.Http",
+                "MeetupAPI");
     })
     .WithTracing(x =>
     {
-        if (builder.Environment.IsDevelopment())
-        {
-            x.SetSampler<AlwaysOnSampler>();
-        }
+        if (builder.Environment.IsDevelopment()) x.SetSampler<AlwaysOnSampler>();
 
         x.AddAspNetCoreInstrumentation()
             .AddGrpcClientInstrumentation()
@@ -70,10 +68,7 @@ builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtl
 builder.Services.ConfigureOpenTelemetryMeterProvider(metrics => metrics.AddOtlpExporter());
 builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
 
-builder.Services.ConfigureHttpClientDefaults(http =>
-{
-    http.AddStandardResilienceHandler();
-});
+builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); });
 
 builder.Services.AddMetrics();
 builder.Services.AddSingleton<IMeetupApiMetrics, MeetupApiMetrics>();
@@ -95,12 +90,10 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey))
     };
 });
-builder.Services.AddAuthorization(options =>
-{
-    // this policy will be met only by user with specified nationality
-    options.AddPolicy("HasNationality", policy => policy.RequireClaim("Nationality", "German", "English"));
-    options.AddPolicy("AtLeast18", policy => policy.AddRequirements(new MinimumAgeRequirement(18)));
-});
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("HasNationality", policy => policy.RequireClaim("Nationality", "German", "English"))
+    .AddPolicy("AtLeast18", policy => policy.AddRequirements(new MinimumAgeRequirement(18)));
 
 builder.Services
     .AddHealthChecks()
@@ -109,21 +102,24 @@ builder.Services
 
 //adding healthchecks UI
 builder.Services.AddHealthChecksUI(opt =>
-{
-    opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
-    opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
-    opt.SetApiMaxActiveRequests(1); //api requests concurrency
+    {
+        opt.SetEvaluationTimeInSeconds(15); //time in seconds between check
+        opt.MaximumHistoryEntriesPerEndpoint(60); //maximum history of checks
+        opt.SetApiMaxActiveRequests(1); //api requests concurrency
 
-    opt.AddHealthCheckEndpoint("Health Check", "/healthz"); //map health check api
-})
-.AddInMemoryStorage();
+        opt.AddHealthCheckEndpoint("Health Check", "/healthz"); //map health check api
+    })
+    .AddInMemoryStorage();
+
+builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationRulesToSwagger();
 
 builder.Services.AddScoped<TimeTrackFilter>();
 builder.Services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
@@ -131,15 +127,10 @@ builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
 builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer(myDbConfig));
 builder.Services.AddScoped<MeetupSeeder>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "MeetupAPI", Version = "v1" });
-});
+builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeetupAPI", Version = "v1" }); });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("FrontEndClient", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
-});
+builder.Services.AddCors(options => { options.AddPolicy("FrontEndClient", 
+    policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")); });
 
 var app = builder.Build();
 
@@ -148,11 +139,9 @@ app.MapDefaultEndpoints();
 app.UseResponseCaching();
 app.UseStaticFiles();
 app.UseCors("FrontEndClient");
+
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MeetupAPI v1");
-});
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "MeetupAPI v1"); });
 
 if (app.Environment.IsDevelopment())
 {
@@ -184,7 +173,6 @@ app.MapHealthChecksUI();
 
 app.Run();
 
-
 void SeedDatabase()
 {
     using (var scope = app.Services.CreateScope())
@@ -201,6 +189,4 @@ void SeedDatabase()
     }
 }
 
-public partial class Program 
-{
-}
+public partial class Program;
