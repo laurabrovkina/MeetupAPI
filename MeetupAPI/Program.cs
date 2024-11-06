@@ -98,8 +98,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     // this policy will be met only by user with specified nationality
-    options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "English"));
-    options.AddPolicy("AtLeast18", builder => builder.AddRequirements(new MinimumAgeRequirement(18)));
+    options.AddPolicy("HasNationality", policy => policy.RequireClaim("Nationality", "German", "English"));
+    options.AddPolicy("AtLeast18", policy => policy.AddRequirements(new MinimumAgeRequirement(18)));
 });
 
 builder.Services
@@ -138,7 +138,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontEndClient", builder => builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
+    options.AddPolicy("FrontEndClient", policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
 });
 
 var app = builder.Build();
@@ -172,19 +172,13 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.MapControllers();
+app.MapHealthChecks("/healthz", new HealthCheckOptions
 {
-    endpoints.MapControllers();
-    //adding endpoint of health check for the health check ui in UI format
-    endpoints.MapHealthChecks("/healthz", new HealthCheckOptions
-    {
-        Predicate = _ => true,
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
-
-    //map healthcheck ui endpoing - default is /healthchecks-ui/
-    endpoints.MapHealthChecksUI();
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse // Returns UI-compatible JSON format
 });
+app.MapHealthChecksUI();
 
 //SeedDatabase();
 
