@@ -3,6 +3,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
+using Meetup.Aspire.ServiceDefaults;
 using MeetupAPI;
 using MeetupAPI.Authorization;
 using MeetupAPI.Entities;

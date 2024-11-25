@@ -1,4 +1,4 @@
-using Projects;
+using Meetup.Aspire.ServiceDefaults;
 
 var builder = DistributedApplication.CreateBuilder(args);
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
 
         <IsPackable>false</IsPackable>
     </PropertyGroup>
@@ -11,6 +11,7 @@
         <PackageReference Include="FluentAssertions"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Respawn"/>
         <PackageReference Include="Testcontainers.MsSql"/>

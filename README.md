@@ -212,7 +212,7 @@ user along with the corresponding password specified in the Dockerfile.
 ## Aspire
 
 The new feature of .NET 8 was introduced using Visual Studio tools to add default projects `Meetup.Aspire.AppHost` and
-`Meetup.Aspire.ServiceDefaults` to run Aspire succesfully.
+`Meetup.Aspire.ServiceDefaults` to run Aspire successfully.
 To run Aspire, you would need to run specifically `Meetup.Aspire.AppHost`:
 ![Aspire Dashboard](./Img/image.png)
 There are resources, metrics, traces (see the picture above), and logs and they all are preset and customisable for
@@ -381,3 +381,10 @@ You might change some settings in `launchSettings`
   to 1 second (1000)
 
 [Original idea](https://www.youtube.com/watch?v=617oVraGY_M&t=1s)
+
+### ,NET Aspire in version 9
+There is no need to run `workload install` command anymore. Tools for Aspire are a part of .NET 9
+To install Aspire templates:
+```
+dotnet new install Aspire.ProjectTemplates::9.0
+```
