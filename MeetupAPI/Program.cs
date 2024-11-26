@@ -3,7 +3,6 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
-using Meetup.Aspire.ServiceDefaults;
 using MeetupAPI;
 using MeetupAPI.Authorization;
 using MeetupAPI.Entities;
@@ -61,8 +60,8 @@ builder.Services.AddOpenTelemetry()
         if (builder.Environment.IsDevelopment()) x.SetSampler<AlwaysOnSampler>();
 
         x.AddAspNetCoreInstrumentation()
-            .AddGrpcClientInstrumentation()
-            .AddHttpClientInstrumentation();
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation();
     });
 
 builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
