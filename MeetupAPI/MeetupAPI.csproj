@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -32,6 +32,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" />
     </ItemGroup>
 
     <ItemGroup>
@@ -61,11 +62,10 @@
     </ItemGroup>
 
     <Target Name="SwaggerPostBuildTarget" AfterTargets="PostBuildEvent">
-        <Exec Command="dotnet tool restore"></Exec>
         <Exec Command="dotnet swagger tofile --yaml --output docs/api.yaml $(TargetPath) v1"/>
     </Target>
     <Target Name="NSwag" AfterTargets="AfterBuild" Condition=" '$(GenerateSwaggerFiles)' == 'true'">
-        <Exec Command="$(NSwagExe_Net60) openapi2csclient /input:docs/api.yaml /output:docs/MeetupClient.cs /JsonLibrary:SystemTextJson /classname:{controller}Client /operationGenerationMode:MultipleClientsFromFirstTagAndPathSegments /generateOptionalParameters:true /wrapResponses:true /generateResponseClasses:true /responseClass:Response /exceptionClass:MeetupApiException /useBaseUrl:false /generateClientInterfaces:true /generateOptionalPropertiesAsNullable:true"/>
+        <Exec Command="$(NSwagExe_Net90) openapi2csclient /input:docs/api.yaml /output:docs/MeetupClient.cs /JsonLibrary:SystemTextJson /classname:{controller}Client /operationGenerationMode:MultipleClientsFromFirstTagAndPathSegments /generateOptionalParameters:true /wrapResponses:true /generateResponseClasses:true /responseClass:Response /exceptionClass:MeetupApiException /useBaseUrl:false /generateClientInterfaces:true /generateOptionalPropertiesAsNullable:true"/>
     </Target>
 
 </Project>
