@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -29,6 +30,7 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Replicant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +70,16 @@ builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtl
 builder.Services.ConfigureOpenTelemetryMeterProvider(metrics => metrics.AddOtlpExporter());
 builder.Services.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddOtlpExporter());
 
-builder.Services.ConfigureHttpClientDefaults(http => { http.AddStandardResilienceHandler(); });
+builder.Services.ConfigureHttpClientDefaults(http =>
+{
+    http.AddStandardResilienceHandler();
+});
+builder.Services.AddSingleton(
+    _ =>
+    {
+        var clientFactory = _.GetRequiredService<IHttpClientFactory>();
+        return new HttpCache("./cache", () => clientFactory.CreateClient());
+    });
 
 builder.Services.AddMetrics();
 builder.Services.AddSingleton<IMeetupApiMetrics, MeetupApiMetrics>();
