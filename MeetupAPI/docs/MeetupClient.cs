@@ -29,17 +29,17 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> LoginAsync(LoginCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> RegisterAsync(RegisterCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> EditAsync(UpdateUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> EditAsync(UpdateUserCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -78,7 +78,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> LoginAsync(LoginCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -147,7 +147,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> RegisterAsync(RegisterCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -216,7 +216,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> EditAsync(UpdateUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> EditAsync(UpdateUserCommand body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1858,6 +1858,18 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LoginCommand
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        public string Password { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class MeetupDetailsDto
     {
 
@@ -1953,7 +1965,7 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class RegisterUserDto
+    public partial class RegisterCommand
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
@@ -1961,9 +1973,6 @@ namespace MyNamespace
 
         [System.Text.Json.Serialization.JsonPropertyName("password")]
         public string Password { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("confirmPassword")]
-        public string ConfirmPassword { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("nationality")]
         public string Nationality { get; set; }
@@ -1987,7 +1996,7 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateUserDto
+    public partial class UpdateUserCommand
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
@@ -1995,9 +2004,6 @@ namespace MyNamespace
 
         [System.Text.Json.Serialization.JsonPropertyName("password")]
         public string Password { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("confirmPassword")]
-        public string ConfirmPassword { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("firstName")]
         public string FirstName { get; set; }

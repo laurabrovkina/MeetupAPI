@@ -4,15 +4,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using MeetupAPI;
-using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling;
-using MeetupAPI.Filters;
-using MeetupAPI.Health;
-using MeetupAPI.Identity;
-using MeetupAPI.Models;
-using MeetupAPI.Options;
-using MeetupAPI.Validators;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +20,19 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using MediatR;
+using System.Reflection;
+using Authorization;
+using Entities;
+using ErrorHandling;
+using Features.Common.Behaviors;
+using Filters;
+using Health;
+using Identity;
+using Meetup.Aspire.ServiceDefaults;
+using Meetup.Contracts.Models;
+using Options;
+using Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,8 +133,22 @@ builder.Services.AddScoped<MeetupSeeder>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeetupAPI", Version = "v1" }); });
 
-builder.Services.AddCors(options => { options.AddPolicy("FrontEndClient", 
-    policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000")); });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontEndClient",
+    policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
+});
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+});
+
+// Add MediatR Behaviors
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+// Add AutoMapper
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
