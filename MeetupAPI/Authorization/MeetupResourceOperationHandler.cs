@@ -1,13 +1,12 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MeetupAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 
-namespace MeetupAPI.Authorization;
+namespace Authorization;
 
-public class MeetupResourceOperationHandler : AuthorizationHandler<ResourceOperationRequirement, Meetup>
+public class MeetupResourceOperationHandler : AuthorizationHandler<ResourceOperationRequirement, Entities.Meetup>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceOperationRequirement requirement, Meetup resource)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceOperationRequirement requirement, Entities.Meetup resource)
     {
         if (requirement.OperationType == OperationType.Create || requirement.OperationType == OperationType.Read)
         {

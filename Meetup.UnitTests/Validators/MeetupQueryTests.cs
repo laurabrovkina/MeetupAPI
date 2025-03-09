@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using FluentValidation.TestHelper;
-using MeetupAPI.Models;
-using MeetupAPI.Validators;
+using Meetup.Contracts.Models;
+using Validators;
 using Xunit;
 
-namespace Meetup.UnitTests;
+namespace Meetup.UnitTests.Validators;
 
 public class MeetupQueryTests
 {
@@ -118,9 +118,9 @@ public class MeetupQueryTests
     {
         var allowedSortByColumnNames = new[]
         {
-            nameof(MeetupAPI.Entities.Meetup.Date),
-            nameof(MeetupAPI.Entities.Meetup.Organizer),
-            nameof(MeetupAPI.Entities.Meetup.Name)
+            nameof(Entities.Meetup.Date),
+            nameof(Entities.Meetup.Organizer),
+            nameof(Entities.Meetup.Name)
         };
 
         var sut = new MeetupQuery
@@ -139,12 +139,12 @@ public class MeetupQueryTests
     public static IEnumerable<object[]> InvalidSortByColumnNames()
     {
         yield return new[] { "InvalidColumnName" };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Location) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Id) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
+        yield return new[] { nameof(Entities.Meetup.IsPrivate) };
+        yield return new[] { nameof(Entities.Meetup.Location) };
+        yield return new[] { nameof(Entities.Meetup.Lectures) };
+        yield return new[] { nameof(Entities.Meetup.Id) };
+        yield return new[] { nameof(Entities.Meetup.CreatedBy) };
+        yield return new[] { nameof(Entities.Meetup.CreatedById) };
     }
 }
 
@@ -152,9 +152,9 @@ public class ValidSortByNameColumnNames : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Date) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Organizer) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Name) };
+        yield return new[] { nameof(Entities.Meetup.Date) };
+        yield return new[] { nameof(Entities.Meetup.Organizer) };
+        yield return new[] { nameof(Entities.Meetup.Name) };
     }
 
     IEnumerator IEnumerable.GetEnumerator()

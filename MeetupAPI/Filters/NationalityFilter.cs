@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace MeetupAPI.Filters;
+namespace Filters;
 
 public class NationalityFilter : Attribute, IAuthorizationFilter
 {

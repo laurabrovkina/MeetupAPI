@@ -1,10 +1,10 @@
+using Entities;
 using FluentValidation.TestHelper;
-using MeetupAPI.Entities;
-using MeetupAPI.Models;
-using MeetupAPI.Validators;
+using Meetup.Contracts.Models;
+using Validators;
 using Xunit;
 
-namespace MeetupAPI.Facts.Validators;
+namespace Meetup.UnitTests.Validators;
 
 [Collection("Database collection")]
 public class UpdateUserValidatorTests

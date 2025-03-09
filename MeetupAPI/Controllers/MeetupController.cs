@@ -4,17 +4,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
+using Authorization;
 using AutoMapper;
-using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling.Exceptions;
-using MeetupAPI.Filters;
-using MeetupAPI.Models;
+using Entities;
+using ErrorHandling;
+using ErrorHandling.Exceptions;
+using Filters;
+using Meetup.Contracts.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("api/meetup")]
 [Authorize]
@@ -56,11 +57,11 @@ public class MeetupController : ControllerBase
 
         if (!string.IsNullOrEmpty(query.SortBy))
         {
-            var propertySelectors = new Dictionary<string, Expression<Func<Meetup, object>>>
+            var propertySelectors = new Dictionary<string, Expression<Func<Entities.Meetup, object>>>
             {
-                { nameof(Meetup.Name), meetup => meetup.Name },
-                { nameof(Meetup.Date), meetup => meetup.Date },
-                { nameof(Meetup.Organizer), meetup => meetup.Organizer }
+                { nameof(Entities.Meetup.Name), meetup => meetup.Name },
+                { nameof(Entities.Meetup.Date), meetup => meetup.Date },
+                { nameof(Entities.Meetup.Organizer), meetup => meetup.Organizer }
             };
 
             var propertySelector = propertySelectors[query.SortBy];
@@ -119,7 +120,7 @@ public class MeetupController : ControllerBase
             ErrorMessages.BadRequestMessage(model, ModelState);
         }
 
-        var meetup = _mapper.Map<Meetup>(model);
+        var meetup = _mapper.Map<Entities.Meetup>(model);
 
         var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 

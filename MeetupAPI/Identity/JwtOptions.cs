@@ -1,4 +1,4 @@
-﻿namespace MeetupAPI.Identity;
+﻿namespace Identity;
 
 public class JwtOptions
 {

@@ -1,5 +1,7 @@
 using Xunit;
 
+namespace Meetup.UnitTests;
+
 [CollectionDefinition("Database collection")]
 public class DatabaseCollection : ICollectionFixture<DatabaseFixture>
 {

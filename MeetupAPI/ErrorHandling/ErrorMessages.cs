@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Net;
-using MeetupAPI.ErrorHandling.Exceptions;
+using ErrorHandling.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace ErrorHandling;
 
 public static class ErrorMessages
 {

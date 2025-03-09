@@ -1,114 +1,42 @@
-using System.Linq;
-using System.Net;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling.Exceptions;
-using MeetupAPI.Identity;
-using MeetupAPI.Models;
+﻿using System.Threading.Tasks;
+using Features.Account.Login;
+using Features.Account.Register;
+using Features.Account.Update;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("api/account")]
 public class AccountController : ControllerBase
 {
-    private readonly IJwtProvider _jwtProvider;
-    private readonly MeetupContext _meetupContext;
-    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IMediator _mediator;
 
-    public AccountController(MeetupContext meetupContext,
-        IPasswordHasher<User> passwordHasher,
-        IJwtProvider jwtProvider)
+    public AccountController(IMediator mediator)
     {
-        _meetupContext = meetupContext;
-        _passwordHasher = passwordHasher;
-        _jwtProvider = jwtProvider;
+        _mediator = mediator;
     }
 
     [HttpPost("login")]
-    public ActionResult Login([FromBody]RegisterUserDto registerUserDto)
+    public async Task<ActionResult> Login([FromBody] LoginCommand command)
     {
-        var user = _meetupContext.Users
-            .Include(user => user.Role)
-            .FirstOrDefault(user => user.Email == registerUserDto.Email);
-
-        if (user == null)
-        {
-            throw new ApiResponseException(HttpStatusCode.BadRequest, "Invalid username or password");
-        }
-
-        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserDto.Password);
-
-        if (passwordVerificationResult == PasswordVerificationResult.Failed)
-        {
-            throw new ApiResponseException(HttpStatusCode.BadRequest, "Invalid username or password");
-        }
-
-        var token = _jwtProvider.GenerateJwtToken(user);
-
+        var token = await _mediator.Send(command);
         return Ok(token);
     }
 
     [HttpPost("register")]
-    public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+    public async Task<ActionResult> Register([FromBody] RegisterCommand command)
     {
-        if (!ModelState.IsValid)
-        {
-            ErrorMessages.BadRequestMessage(registerUserDto, ModelState);
-        }
-
-        var newUser = new User
-        {
-            Email = registerUserDto.Email,
-            Nationality = registerUserDto.Nationality,
-            DateOfBirth = registerUserDto.DateOfBirth,
-            PasswordHash = null,
-            RoleId = registerUserDto.RoleId
-        };
-
-        var passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
-        newUser.PasswordHash = passwordHash;
-
-        _meetupContext.Users.Add(newUser);
-        _meetupContext.SaveChanges();
-
-        return Ok();
+        var email = await _mediator.Send(command);
+        return CreatedAtAction(nameof(Login), new { email });
     }
 
     [HttpPut("edit")]
     [Authorize(Roles = "Admin,Moderator")]
-    public ActionResult Edit([FromBody] UpdateUserDto updateUserDto)
+    public async Task<ActionResult> Edit([FromBody] UpdateUserCommand command)
     {
-        var user = _meetupContext.Users
-            .FirstOrDefault(x => x.Email == updateUserDto.Email);
-
-        if (user == null)
-        {
-            throw new ApiResponseException(HttpStatusCode.NotFound, $"User with email {updateUserDto.Email} has not been found");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            ErrorMessages.BadRequestMessage(updateUserDto, ModelState);
-        }
-
-        user.FirstName = updateUserDto.FirstName;
-        user.LastName = updateUserDto.LastName;
-        user.Nationality = updateUserDto.Nationality;
-        user.DateOfBirth = updateUserDto.DateOfBirth;
-        user.RoleId= updateUserDto.RoleId;
-
-        if (updateUserDto.Password is not null
-            && updateUserDto.Password == updateUserDto.ConfirmPassword)
-        {
-            var passwordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
-            user.PasswordHash = passwordHash;
-        }
-
-        _meetupContext.SaveChanges();
-
+        await _mediator.Send(command);
         return NoContent();
     }
 }

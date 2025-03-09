@@ -1,4 +1,4 @@
-﻿namespace MeetupAPI.Models;
+﻿namespace Meetup.Contracts.Models;
 
 public class MeetupDetailsDto
 {

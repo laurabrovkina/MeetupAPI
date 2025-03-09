@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using System.IO;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("file")]
 [Authorize]

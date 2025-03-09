@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace MeetupAPI.Filters;
+namespace Filters;
 
 public class TimeTrackFilter : IActionFilter
 {

@@ -1,6 +1,6 @@
-﻿using MeetupAPI.Entities;
+﻿using Entities;
 
-namespace MeetupAPI.Identity;
+namespace Identity;
 
 public interface IJwtProvider
 {

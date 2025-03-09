@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace MeetupAPI.Authorization;
+namespace Authorization;
 
 public class MinimumAgeRequirement : IAuthorizationRequirement
 {

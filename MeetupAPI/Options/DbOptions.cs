@@ -1,4 +1,4 @@
-namespace MeetupAPI.Options;
+namespace Options;
 
 public class DbOptions
 {

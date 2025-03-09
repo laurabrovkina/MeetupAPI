@@ -1,14 +1,13 @@
 ﻿using System.Linq;
 using FluentValidation;
-using MeetupAPI.Entities;
-using MeetupAPI.Models;
+using Meetup.Contracts.Models;
 
-namespace MeetupAPI.Validators;
+namespace Validators;
 
 public class MeetupQueryValidator : AbstractValidator<MeetupQuery>
 {
     private int[] allowedPageSizes = new[] { 1, 5, 15, 50 };
-    private string[] allowedSortByColumnNames = { nameof(Meetup.Date), nameof(Meetup.Organizer), nameof(Meetup.Name) };
+    private string[] allowedSortByColumnNames = { nameof(Entities.Meetup.Date), nameof(Entities.Meetup.Organizer), nameof(Entities.Meetup.Name) };
     public MeetupQueryValidator()
     {
         RuleFor(q => q.SearchPhrase).NotEmpty();

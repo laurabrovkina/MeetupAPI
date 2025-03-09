@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("config")]
 public class ConfigController : ControllerBase

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MeetupAPI.Entities;
-
-namespace MeetupAPI;
+using Entities;
 
 public class MeetupSeeder
 {
@@ -27,9 +25,9 @@ public class MeetupSeeder
 
     private void InsertSampleData()
     {
-        var meetups = new List<Meetup>
+        var meetups = new List<Entities.Meetup>
         {
-            new Meetup
+            new Entities.Meetup
             {
                 Name = "Web summit",
                 Date = DateTime.Now.AddDays(7),
@@ -51,7 +49,7 @@ public class MeetupSeeder
                     }
                 }
             },
-            new Meetup
+            new Entities.Meetup
             {
                 Name = "4Devs",
                 Date = DateTime.Now.AddDays(7),
