@@ -1,19 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
 using System.Security.Claims;
-using Authorization;
-using AutoMapper;
-using Entities;
-using ErrorHandling;
-using ErrorHandling.Exceptions;
-using Filters;
+using System.Threading.Tasks;
+using Features.Meetup;
 using Meetup.Contracts.Models;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Filters;
 
 namespace Controllers;
 
@@ -22,176 +14,64 @@ namespace Controllers;
 [ServiceFilter(typeof(TimeTrackFilter))]
 public class MeetupController : ControllerBase
 {
-    private readonly IAuthorizationService _authorizationService;
-    private readonly IMapper _mapper;
-    private readonly MeetupContext _meetupContext;
-    private readonly IMeetupApiMetrics _metrics;
+    private readonly IMediator _mediator;
 
-    public MeetupController(MeetupContext meetupContext, IMapper mapper,
-        IAuthorizationService authorizationService,
-        IMeetupApiMetrics metrics)
+    public MeetupController(IMediator mediator)
     {
-        _meetupContext = meetupContext;
-        _mapper = mapper;
-        _authorizationService = authorizationService;
-        _metrics = metrics;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    //[NationalityFilter("German,Russian")]
     [AllowAnonymous]
-    public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery] MeetupQuery query)
+    public async Task<ActionResult<PagedResult<MeetupDetailsDto>>> GetAll([FromQuery] MeetupQuery query)
     {
-        using var _ = _metrics.MeasureRequestDuration();
-
         if (!ModelState.IsValid)
         {
-            ErrorMessages.BadRequestMessage(query, ModelState);
+            return BadRequest(ModelState);
         }
 
-        var baseQuery = _meetupContext.Meetups
-            .Include(m => m.Location)
-            .Where(m => query.SearchPhrase == null ||
-                        m.Organizer.ToLower().Contains(query.SearchPhrase.ToLower()) ||
-                        m.Name.Contains(query.SearchPhrase.ToLower()));
-
-        if (!string.IsNullOrEmpty(query.SortBy))
-        {
-            var propertySelectors = new Dictionary<string, Expression<Func<Entities.Meetup, object>>>
-            {
-                { nameof(Entities.Meetup.Name), meetup => meetup.Name },
-                { nameof(Entities.Meetup.Date), meetup => meetup.Date },
-                { nameof(Entities.Meetup.Organizer), meetup => meetup.Organizer }
-            };
-
-            var propertySelector = propertySelectors[query.SortBy];
-
-            baseQuery = query.SortDirection == SortDirection.ASC
-                ? baseQuery.OrderBy(m => m.Date)
-                : baseQuery.OrderByDescending(m => m.Name);
-        }
-
-        var meetups = baseQuery
-            .Skip(query.PageSize * (query.PageNumber - 1))
-            .Take(query.PageSize)
-            .ToList();
-
-        var totalCount = baseQuery.Count();
-
-        var meetupDtos = _mapper.Map<List<MeetupDetailsDto>>(meetups);
-
-        var result = new PagedResult<MeetupDetailsDto>(meetupDtos, totalCount, query.PageNumber, query.PageSize);
-
+        var result = await _mediator.Send(new GetMeetupsQuery(query));
         return Ok(result);
     }
 
     [HttpGet("{name}")]
-    //[NationalityFilter("English")]
-    // Authorisation policy that checks if the user has a claim nationality
-    //[Authorize(Policy = "HasNationality")]
-    //[Authorize(Policy = "AtLeast18")]
-    public ActionResult<MeetupDetailsDto> Get(string name)
+    public async Task<ActionResult<MeetupDetailsDto>> Get(string name)
     {
-        using var _ = _metrics.MeasureRequestDuration();
-
-        var meetup = _meetupContext.Meetups
-            .Include(m => m.Location)
-            .Include(m => m.Lectures)
-            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == name.ToLower());
-
-        if (meetup == null)
-        {
-            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
-        }
-
-        var meetupDto = _mapper.Map<MeetupDetailsDto>(meetup);
-        return Ok(meetupDto);
+        var result = await _mediator.Send(new GetMeetupQuery(name));
+        return Ok(result);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,Moderator")]
-    public ActionResult Post([FromBody] MeetupDto model)
+    public async Task<ActionResult> Post([FromBody] MeetupDto model)
     {
-        using var _ = _metrics.MeasureRequestDuration();
-        _metrics.IncreaseMeetupRequestCount();
-
         if (!ModelState.IsValid)
         {
-            ErrorMessages.BadRequestMessage(model, ModelState);
+            return BadRequest(ModelState);
         }
 
-        var meetup = _mapper.Map<Entities.Meetup>(model);
+        var userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        var key = await _mediator.Send(new CreateMeetupCommand(model, userId));
 
-        var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-        meetup.CreatedById = int.Parse(userId);
-
-        _meetupContext.Meetups.Add(meetup);
-        _meetupContext.SaveChanges();
-
-        var key = meetup.Name.Replace(" ", "-").ToLower();
-        return Created("api/meetup/" + key, null);
+        return Created($"api/meetup/{key}", null);
     }
 
     [HttpPut("{name}")]
-    public ActionResult Put(string name, [FromBody] MeetupDto model)
+    public async Task<ActionResult> Put(string name, [FromBody] MeetupDto model)
     {
-        using var _ = _metrics.MeasureRequestDuration();
-
-        var meetup = _meetupContext.Meetups
-            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == name.ToLower());
-
-        if (meetup == null)
-        {
-            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
-        }
-
-        var authorizationResult = _authorizationService.AuthorizeAsync(User, meetup, new ResourceOperationRequirement(OperationType.Update)).Result;
-
-        if (!authorizationResult.Succeeded)
-        {
-            throw new ApiResponseException(HttpStatusCode.Forbidden, "Forbidden");
-        }
-
         if (!ModelState.IsValid)
         {
-            ErrorMessages.BadRequestMessage(model, ModelState);
+            return BadRequest(ModelState);
         }
 
-        meetup.Name = model.Name;
-        meetup.Organizer = model.Organizer;
-        meetup.Date = model.Date;
-        meetup.IsPrivate = model.IsPrivate;
-
-        _meetupContext.SaveChanges();
-
+        await _mediator.Send(new UpdateMeetupCommand(name, model, User));
         return NoContent();
     }
 
     [HttpDelete("{name}")]
-    public ActionResult Delete(string name)
+    public async Task<ActionResult> Delete(string name)
     {
-        using var _ = _metrics.MeasureRequestDuration();
-
-        var meetup = _meetupContext.Meetups
-            .Include(m => m.Location)
-            .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == name.ToLower());
-
-        if (meetup == null)
-        {
-            throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
-        }
-
-        var authorizationResult = _authorizationService.AuthorizeAsync(User, meetup, new ResourceOperationRequirement(OperationType.Delete)).Result;
-
-        if (!authorizationResult.Succeeded)
-        {
-            throw new ApiResponseException(HttpStatusCode.Forbidden, "Forbidden");
-        }
-
-        _meetupContext.Remove(meetup);
-        _meetupContext.SaveChanges();
-
+        await _mediator.Send(new DeleteMeetupCommand(name, User));
         return NoContent();
     }
 }

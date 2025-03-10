@@ -1,30 +1,24 @@
-﻿using System;
+﻿using System.Threading.Tasks;
+using Features.Config;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Controllers;
 
 [Route("config")]
 public class ConfigController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
+    private readonly IMediator _mediator;
 
-    public ConfigController(IConfiguration configuration)
+    public ConfigController(IMediator mediator)
     {
-        _configuration = configuration;
+        _mediator = mediator;
     }
 
     [HttpOptions("reload")]
-    public ActionResult Reload()
+    public async Task<ActionResult> Reload()
     {
-        try
-        {
-            ((IConfigurationRoot)_configuration).Reload();
-            return Ok();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
+        var success = await _mediator.Send(new ReloadConfigCommand());
+        return success ? Ok() : StatusCode(500);
     }
 }

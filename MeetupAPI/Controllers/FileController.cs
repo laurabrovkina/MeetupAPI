@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿using System.Threading.Tasks;
+using Features.File;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace Controllers;
 
@@ -9,23 +10,24 @@ namespace Controllers;
 [Authorize]
 public class FileController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public FileController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [ResponseCache(Duration = 1200, VaryByQueryKeys = new[] { "name" })]
     [HttpGet]
-    public ActionResult GetFile(string name)
+    public async Task<ActionResult> GetFile(string name)
     {
-        var rootFolder = Directory.GetCurrentDirectory();
-        var fileFullPath = rootFolder + "\\PrivateAssets\\" + name;
+        var result = await _mediator.Send(new GetFileQuery(name));
 
-        if (!System.IO.File.Exists(fileFullPath))
+        if (result == null)
         {
             return NotFound();
         }
 
-        var file = System.IO.File.ReadAllBytes(fileFullPath);
-        var fileProvider = new FileExtensionContentTypeProvider();
-
-        fileProvider.TryGetContentType(fileFullPath, out var contentType);
-
-        return File(file, contentType, name);
+        return File(result.FileContent, result.ContentType, result.FileName);
     }
 }
