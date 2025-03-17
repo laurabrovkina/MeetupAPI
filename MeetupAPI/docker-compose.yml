@@ -1,0 +1,99 @@
+version: "3.8"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2017-CU17-ubuntu
+    container_name: meetup-db
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=CorrectHorseBatteryStapleFor$
+      - MSSQL_PID=Express
+      - MSSQL_MEMORY_LIMIT_MB=2048
+      - MSSQL_AGENT_ENABLED=false
+    volumes:
+      - ./create-database.sql:/docker-entrypoint-initdb.d/create-database.sql:Z
+      - meetup-data:/var/opt/mssql:Z
+    command: >
+      bash -c '
+        /opt/mssql/bin/sqlservr &
+        sleep 30s &&
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P CorrectHorseBatteryStapleFor$ -i /docker-entrypoint-initdb.d/create-database.sql &&
+        tail -f /dev/null
+      '
+    networks:
+      - meetup-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "CorrectHorseBatteryStapleFor$" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: "2"
+        reservations:
+          memory: 2G
+          cpus: "1"
+    security_opt:
+      - label:disable
+    user: mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Release
+    container_name: meetup-api
+    ports:
+      - "5000:80"
+      - "5001:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;https://+:443
+      - ConnectionStrings__MeetupDb=Server=db;Database=MeetupDb;User Id=sa;Password=CorrectHorseBatteryStapleFor$;TrustServerCertificate=True;Max Pool Size=100;MultipleActiveResultSets=True
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft=Warning
+      - AllowedHosts=*
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - meetup-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    security_opt:
+      - label:disable
+    user: 1001:1001
+
+volumes:
+  meetup-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/data
+
+networks:
+  meetup-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

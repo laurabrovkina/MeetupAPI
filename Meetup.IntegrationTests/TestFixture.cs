@@ -26,7 +26,8 @@ public class TestFixture : WebApplicationFactory<Program>, IAsyncLifetime
     private const ushort MsSqlPort = 1433;
 
     private readonly MsSqlContainer _dbContainer = new MsSqlBuilder()
-        .WithImage("db-meetup:latest")
+        //.WithImage("db-meetup:latest")
+        .WithImage("mcr.microsoft.com/mssql/server:2017-CU17-ubuntu")
         .WithPortBinding(MsSqlPort, true)
         .WithPassword(Password)
         .WithCleanUp(true)
