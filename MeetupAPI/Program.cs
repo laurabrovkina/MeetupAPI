@@ -23,6 +23,7 @@ using OpenTelemetry.Trace;
 using MediatR;
 using System.Reflection;
 using Authorization;
+using Controllers;
 using Entities;
 using ErrorHandling;
 using Features.Common.Behaviors;
@@ -143,6 +144,12 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 });
+
+builder.Services.AddScoped<GetMeetupHandler>();
+builder.Services.AddScoped<Controllers.IRequestHandler<GetMeetupRequest, MeetupDetailsDto>>(sp =>
+    new LoggingRequestHandler<GetMeetupRequest, MeetupDetailsDto>(
+        sp.GetRequiredService<ILogger<LoggingRequestHandler<GetMeetupRequest, MeetupDetailsDto>>>(),
+        sp.GetRequiredService<GetMeetupHandler>()));
 
 // Add MediatR Behaviors
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

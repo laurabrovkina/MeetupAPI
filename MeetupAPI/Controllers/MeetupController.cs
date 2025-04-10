@@ -10,15 +10,18 @@ using Filters;
 namespace Controllers;
 
 [Route("api/meetup")]
-[Authorize]
+//[Authorize]
 [ServiceFilter(typeof(TimeTrackFilter))]
 public class MeetupController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IRequestHandler<GetMeetupRequest, MeetupDetailsDto> _requestHandler;
 
-    public MeetupController(IMediator mediator)
+    public MeetupController(IMediator mediator,
+        IRequestHandler<GetMeetupRequest, MeetupDetailsDto> requestHandler)
     {
         _mediator = mediator;
+        _requestHandler = requestHandler;
     }
 
     [HttpGet]
@@ -34,10 +37,17 @@ public class MeetupController : ControllerBase
         return Ok(result);
     }
 
+    // [HttpGet("{name}")]
+    // public async Task<ActionResult<MeetupDetailsDto>> Get(string name)
+    // {
+    //     var result = await _mediator.Send(new GetMeetupQuery(name));
+    //     return Ok(result);
+    // }   
+    
     [HttpGet("{name}")]
     public async Task<ActionResult<MeetupDetailsDto>> Get(string name)
     {
-        var result = await _mediator.Send(new GetMeetupQuery(name));
+        var result = await _requestHandler.Handle(new GetMeetupRequest(name));
         return Ok(result);
     }
 
