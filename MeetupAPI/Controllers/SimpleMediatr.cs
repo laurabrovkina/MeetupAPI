@@ -52,7 +52,7 @@ public sealed class GetMeetupHandler : IRequestHandler<GetMeetupRequest, MeetupD
         var meetup = await _context.Meetups
             .Include(m => m.Location)
             .Include(m => m.Lectures)
-            .FirstOrDefaultAsync(m => m.Name.Replace(" ", "-").ToLower() == request.Name.ToLower(),
+            .FirstOrDefaultAsync(m => m.Name.Replace(" ", "-").Equals(request.Name, System.StringComparison.CurrentCultureIgnoreCase),
                 cancellationToken);
 
         if (meetup == null)
