@@ -150,6 +150,10 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 // Add AutoMapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+// db context DI in the handler requires Scoped lifetime
+builder.Services.AddMediator(options =>
+    options.ServiceLifetime = ServiceLifetime.Scoped);
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
