@@ -182,7 +182,39 @@ using url `https://localhost:5000/swagger/index.html`.
   standard and heavy
   `WebApplicationFactory` - [Original link](https://wrapt.dev/blog/integration-tests-in-dotnet-without-webappfactory).
   There is still a problem with the `TestingServiceScope` class, but the whole idea is quite clear.
+* `senrty-feature` - this branch is to explore [Sentry.io] functionality, site [Sentry.io](https://sentry.io/) site and create an account. For the specific project choose what platform and language you use:
+  To obtain a secret key go to:
+  * Setting (a cog next to the project name)
+  * Client Keys (DSN)
+  * Default DSN
+Their traces look like: ![pic](./Img/sentry_ui.jpg)
+Adding config to the api:
+```
+    builder.WebHost.UseSentry(options =>
+    {
+        options.Dsn = builder.Configuration.GetSection("Sentry:Dsn").Get<string>();
+        options.SendDefaultPii = true;
+        options.SampleRate = 1.0f;
+        options.TracesSampleRate = 1.0;
+        options.UseOpenTelemetry();
+    });
+    //Also setting should be set in .AddOpenTelemetry
+    //***********************************************
+    builder.Services.AddOpenTelemetry()
+    .WithMetrics(x =>
+    {
+        ****
+    })
+    .WithTracing(x =>
+    {
+        if (builder.Environment.IsDevelopment()) x.SetSampler<AlwaysOnSampler>();
 
+        x.AddAspNetCoreInstrumentation()
+            .AddGrpcClientInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSentry();
+    });
+```
 ## Dockerization
 
 * The original idea was found on
