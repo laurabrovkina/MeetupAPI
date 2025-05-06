@@ -17,6 +17,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,7 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Sentry.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,15 @@ var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? ne
 var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("jwt"));
 builder.Services.Configure<DbOptions>(builder.Configuration.GetSection("ConnectionStrings"));
+
+builder.WebHost.UseSentry(options =>
+{
+    options.Dsn = builder.Configuration.GetSection("Sentry:Dsn").Get<string>();
+    options.SendDefaultPii = true;
+    options.SampleRate = 1.0f;
+    options.TracesSampleRate = 1.0;
+    options.UseOpenTelemetry();
+});
 
 builder.Logging.AddOpenTelemetry(x =>
 {
@@ -61,7 +72,8 @@ builder.Services.AddOpenTelemetry()
 
         x.AddAspNetCoreInstrumentation()
             .AddGrpcClientInstrumentation()
-            .AddHttpClientInstrumentation();
+            .AddHttpClientInstrumentation()
+            .AddSentry();
     });
 
 builder.Services.Configure<OpenTelemetryLoggerOptions>(logging => logging.AddOtlpExporter());
