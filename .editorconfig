@@ -3,6 +3,7 @@ end_of_line = lf
 
 [*.cs]
 max_line_length = 200
+dotnet_diagnostic.CS1591.severity = none
 
 # Disable some rules
 dotnet_diagnostic.IDE0290.severity = none
