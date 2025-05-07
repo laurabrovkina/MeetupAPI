@@ -249,6 +249,18 @@ To run Aspire, you would need to run specifically `Meetup.Aspire.AppHost`:
 ![Aspire Dashboard](./Img/image.png)
 There are resources, metrics, traces (see the picture above), and logs and they all are preset and customisable for
 particular needs in your application.
+First step is to install Aspire Tooling:
+```
+ dotnet workload install aspire
+```
+Aspire `Meetup.Aspire.AppHost.csproj` should look like:
+```
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0" />
+
+</Project>
+```
 Also, it is possible to generate `manifest.json` file describing everything that is happening in your applications and
 how Aspire wires everything up. Then this file might be taken and translated to any cloud environment, IaC that is
 required. This command creates a manifest file:
