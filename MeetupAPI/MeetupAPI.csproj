@@ -62,8 +62,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageVersion Update="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
-      <PackageVersion Update="Microsoft.Extensions.Configuration" Version="9.0.4" />
+      <PackageVersion Update="MicroElements.Swashbuckle.FluentValidation"/>
+      <PackageVersion Update="Microsoft.Extensions.Configuration" />
     </ItemGroup>
 
     <Target Name="SwaggerPostBuildTarget" AfterTargets="PostBuildEvent">
