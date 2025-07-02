@@ -4,25 +4,23 @@ using MeetupAPI.Models;
 using MeetupAPI.Validators;
 using Xunit;
 
-namespace MeetupAPI.Facts.Validators;
+namespace Meetup.UnitTests.Validators;
 
 [Collection("Database collection")]
 public class UpdateUserValidatorTests
 {
-    private readonly MeetupContext meetupContext;
-    private readonly DatabaseFixture _fixture;
+    private readonly MeetupContext _meetupContext;
 
     public UpdateUserValidatorTests(DatabaseFixture fixture)
     {
-        _fixture = fixture;
-        meetupContext = _fixture._meetupContext;
+        _meetupContext = fixture.MeetupContext;
     }
 
     [Fact]
     public void ShouldHaveValidationError_WhenRoleIdDoesNotExist()
     {
         // Arrange           
-        var validator = new UpdateUserValidator(meetupContext);
+        var validator = new UpdateUserValidator(_meetupContext);
         var updateUserDto = new UpdateUserDto { RoleId = 111 }; // Assuming 111 is an invalid RoleId
 
         // Act
@@ -37,7 +35,7 @@ public class UpdateUserValidatorTests
     public void ShouldHaveValidationError_WhenEmailDoesNotExist()
     {
         // Arrange
-        var validator = new UpdateUserValidator(meetupContext);
+        var validator = new UpdateUserValidator(_meetupContext);
         var updateUserDto = new UpdateUserDto { Email = "nonexistent@example.com" }; // Assuming the email doesn't exist in the database
 
         // Act
@@ -52,7 +50,7 @@ public class UpdateUserValidatorTests
     public void ShouldNotHaveValidationError_WhenRoleIdAndEmailExist()
     {
         // Arrange
-        var validator = new UpdateUserValidator(meetupContext);
+        var validator = new UpdateUserValidator(_meetupContext);
         var updateUserDto = new UpdateUserDto { RoleId = 1, Email = "existing@example.com" }; // Assuming RoleId and email exist in the database
 
         // Act

@@ -2,26 +2,28 @@ using System;
 using MeetupAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
+namespace Meetup.UnitTests;
+
 public class DatabaseFixture : IDisposable
 {
-    public readonly MeetupContext _meetupContext;
+    public readonly MeetupContext MeetupContext;
 
     public DatabaseFixture()
     {
-        _meetupContext = new MeetupContext((DbContextOptions<MeetupContext>?)
+        MeetupContext = new MeetupContext((DbContextOptions<MeetupContext>?)
             new DbContextOptionsBuilder<MeetupContext>()
                 .UseInMemoryDatabase("MeetupDb")
                 .Options);
 
-        _meetupContext.Roles.Add(new Role { Id = 1, RoleName = "Moderator" });
-        _meetupContext.Roles.Add(new Role { Id = 2, RoleName = "User" });
-        _meetupContext.Roles.Add(new Role { Id = 3, RoleName = "Admin" });
-        _meetupContext.Users.Add(new User { Email = "existing@example.com" });
-        _meetupContext.SaveChanges();
+        MeetupContext.Roles.Add(new Role { Id = 1, RoleName = "Moderator" });
+        MeetupContext.Roles.Add(new Role { Id = 2, RoleName = "User" });
+        MeetupContext.Roles.Add(new Role { Id = 3, RoleName = "Admin" });
+        MeetupContext.Users.Add(new User { Email = "existing@example.com" });
+        MeetupContext.SaveChanges();
     }
 
     public void Dispose()
     {
-        _meetupContext.Dispose();
+        MeetupContext.Dispose();
     }
 }

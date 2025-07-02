@@ -5,7 +5,7 @@ using MeetupAPI.Models;
 using MeetupAPI.Validators;
 using Xunit;
 
-namespace Meetup.UnitTests;
+namespace Meetup.UnitTests.Validators;
 
 public class MeetupQueryTests
 {
@@ -138,13 +138,13 @@ public class MeetupQueryTests
 
     public static IEnumerable<object[]> InvalidSortByColumnNames()
     {
-        yield return new[] { "InvalidColumnName" };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.IsPrivate) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Location) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Lectures) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Id) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedBy) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.CreatedById) };
+        yield return ["InvalidColumnName"];
+        yield return [nameof(MeetupAPI.Entities.Meetup.IsPrivate)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.Location)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.Lectures)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.Id)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.CreatedBy)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.CreatedById)];
     }
 }
 
@@ -152,9 +152,9 @@ public class ValidSortByNameColumnNames : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Date) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Organizer) };
-        yield return new[] { nameof(MeetupAPI.Entities.Meetup.Name) };
+        yield return [nameof(MeetupAPI.Entities.Meetup.Date)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.Organizer)];
+        yield return [nameof(MeetupAPI.Entities.Meetup.Name)];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
