@@ -46,7 +46,7 @@ public class MeetupQueryTests
     [Theory]
     [InlineData(null)]
     [ClassData(typeof(ValidSortByNameColumnNames))]
-    public void Should_Not_Have_Validation_Error_For_Valid_SortBy_Column_Names(string allowedSortByColumnNames)
+    public void Should_Not_Have_Validation_Error_For_Valid_SortBy_Column_Names(string? allowedSortByColumnNames)
     {
         var sut = new MeetupQuery
         {
@@ -95,7 +95,7 @@ public class MeetupQueryTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Should_Throw_Error_When_Search_Phrase_Is_Null_Or_Empty(string searchPhrase)
+    public void Should_Throw_Error_When_Search_Phrase_Is_Null_Or_Empty(string? searchPhrase)
     {
         // Arrange
         var sut = new MeetupQuery
