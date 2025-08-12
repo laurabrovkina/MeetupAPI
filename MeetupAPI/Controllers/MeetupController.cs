@@ -120,11 +120,9 @@ public class MeetupController : ControllerBase
             ErrorMessages.BadRequestMessage(model, ModelState);
         }
 
-        var meetup = _mapper.Map<Meetup>(model);
+        var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        var userId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
-
-        meetup.CreatedById = int.Parse(userId);
+        var meetup = Meetup.Create(model, userId);
 
         _meetupContext.Meetups.Add(meetup);
         _meetupContext.SaveChanges();

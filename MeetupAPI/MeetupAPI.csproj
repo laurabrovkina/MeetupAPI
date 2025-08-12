@@ -12,6 +12,11 @@
         <PackageReference Include="AspNetCore.HealthChecks.UI"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage"/>
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="Mediator.SourceGenerator">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
         <PackageReference Include="AutoMapper"/>
         <PackageReference Include="Azure.Identity"/>

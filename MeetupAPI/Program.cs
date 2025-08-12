@@ -9,7 +9,7 @@ using FluentValidation.AspNetCore;
 using Health;
 using HealthChecks.UI.Client;
 using Identity;
-using MeetupAPI;
+using Interceptors;
 using MeetupAPI.Models;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +33,9 @@ using Validators;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddMediator();
+builder.Services.AddScoped<DomainEventsInterceptor>();
 
 var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? new JwtOptions();
 var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
@@ -124,7 +127,11 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>()
 builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
 builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
 builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
-builder.Services.AddDbContext<MeetupContext>(option => option.UseSqlServer(myDbConfig));
+builder.Services.AddDbContext<MeetupContext>((sp, option) =>
+{
+    option.UseSqlServer(myDbConfig);
+    option.AddInterceptors(sp.GetRequiredService<DomainEventsInterceptor>());
+});
 builder.Services.AddScoped<MeetupSeeder>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeetupAPI", Version = "v1" }); });
@@ -175,17 +182,17 @@ app.Run();
 
 void SeedDatabase()
 {
-    using (var scope = app.Services.CreateScope())
+    using var scope = app.Services.CreateScope();
+    try
     {
-        try
-        {
-            var meetupSeeder = scope.ServiceProvider.GetRequiredService<MeetupSeeder>();
-            meetupSeeder.Seed();
-        }
-        catch
-        {
-            throw;
-        }
+        var meetupSeeder = scope.ServiceProvider.GetRequiredService<MeetupSeeder>();
+        meetupSeeder.Seed();
+    }
+    catch
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError("An error occurred seeding the DB.");
+        throw;
     }
 }
 
