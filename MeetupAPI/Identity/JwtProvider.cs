@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MeetupAPI.Entities;
+using Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MeetupAPI.Identity;
+namespace Identity;
 
 public class JwtProvider : IJwtProvider
 {

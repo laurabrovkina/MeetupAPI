@@ -1,5 +1,5 @@
 using System;
-using MeetupAPI.Entities;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Meetup.UnitTests;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MeetupAPI.Entities;
+namespace Entities;
 
 public class User
 {

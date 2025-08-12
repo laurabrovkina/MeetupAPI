@@ -1,18 +1,16 @@
 using System;
 using System.Text;
+using Authorization;
+using Entities;
+using ErrorHandling;
+using Filters;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Health;
 using HealthChecks.UI.Client;
+using Identity;
 using MeetupAPI;
-using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling;
-using MeetupAPI.Filters;
-using MeetupAPI.Health;
-using MeetupAPI.Identity;
 using MeetupAPI.Models;
-using MeetupAPI.Options;
-using MeetupAPI.Validators;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +27,8 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Options;
+using Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 

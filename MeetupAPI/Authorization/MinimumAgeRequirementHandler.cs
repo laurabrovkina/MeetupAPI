@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
-namespace MeetupAPI.Authorization;
+namespace Authorization;
 
 public class MinimumAgeHandler : AuthorizationHandler<MinimumAgeRequirement>
 {

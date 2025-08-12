@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MeetupAPI.Entities;
+namespace Entities;
 
 public class MeetupContext : DbContext
 {

@@ -1,15 +1,16 @@
 using System.Linq;
 using System.Net;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling.Exceptions;
-using MeetupAPI.Identity;
+using Entities;
+using ErrorHandling;
+using ErrorHandling.Exceptions;
+using Identity;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("api/account")]
 public class AccountController : ControllerBase

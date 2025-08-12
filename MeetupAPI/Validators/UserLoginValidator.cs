@@ -1,8 +1,8 @@
-﻿using FluentValidation;
-using MeetupAPI.Entities;
+﻿using Entities;
+using FluentValidation;
 using MeetupAPI.Models;
 
-namespace MeetupAPI.Validators;
+namespace Validators;
 
 public class UserLoginValidator : AbstractValidator<UserLoginDto>
 {

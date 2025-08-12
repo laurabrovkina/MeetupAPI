@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Metrics;
 
-namespace MeetupAPI;
-
 public class MeetupApiMetrics : IMeetupApiMetrics
 {
     public const string MeterName = "MeetupAPI";

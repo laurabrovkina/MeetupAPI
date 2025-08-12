@@ -1,4 +1,4 @@
-﻿namespace MeetupAPI.Entities;
+﻿namespace Entities;
 
 public class Location
 {

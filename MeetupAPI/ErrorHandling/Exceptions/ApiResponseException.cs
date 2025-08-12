@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace MeetupAPI.ErrorHandling.Exceptions;
+namespace ErrorHandling.Exceptions;
 
 public class ApiResponseException : Exception
 {

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MeetupAPI.Entities;
-
-namespace MeetupAPI;
+using Entities;
 
 public class MeetupSeeder
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MeetupAPI.Entities;
+namespace Entities;
 
 public class Meetup
 {

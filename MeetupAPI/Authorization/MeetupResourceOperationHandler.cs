@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MeetupAPI.Entities;
+using Entities;
 using Microsoft.AspNetCore.Authorization;
 
-namespace MeetupAPI.Authorization;
+namespace Authorization;
 
 public class MeetupResourceOperationHandler : AuthorizationHandler<ResourceOperationRequirement, Meetup>
 {

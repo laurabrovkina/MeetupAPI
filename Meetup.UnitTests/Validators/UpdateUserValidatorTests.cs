@@ -1,7 +1,7 @@
+using Entities;
 using FluentValidation.TestHelper;
-using MeetupAPI.Entities;
 using MeetupAPI.Models;
-using MeetupAPI.Validators;
+using Validators;
 using Xunit;
 
 namespace Meetup.UnitTests.Validators;

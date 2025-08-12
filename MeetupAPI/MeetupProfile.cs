@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using MeetupAPI.Entities;
+using Entities;
 using MeetupAPI.Models;
-
-namespace MeetupAPI;
 
 public class MeetupProfile : Profile
 {

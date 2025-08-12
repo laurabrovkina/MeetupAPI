@@ -4,17 +4,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
+using Authorization;
 using AutoMapper;
-using MeetupAPI.Authorization;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling.Exceptions;
-using MeetupAPI.Filters;
+using Entities;
+using ErrorHandling;
+using ErrorHandling.Exceptions;
+using Filters;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("api/meetup")]
 [Authorize]

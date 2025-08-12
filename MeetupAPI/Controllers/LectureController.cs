@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Net;
 using AutoMapper;
-using MeetupAPI.Entities;
-using MeetupAPI.ErrorHandling.Exceptions;
+using Entities;
+using ErrorHandling;
+using ErrorHandling.Exceptions;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace MeetupAPI.Controllers;
+namespace Controllers;
 
 [Route("api/meetup/{meetupName}/lecture")]
 public class LectureController : ControllerBase

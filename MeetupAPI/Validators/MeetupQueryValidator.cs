@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using Entities;
 using FluentValidation;
-using MeetupAPI.Entities;
 using MeetupAPI.Models;
 
-namespace MeetupAPI.Validators;
+namespace Validators;
 
 public class MeetupQueryValidator : AbstractValidator<MeetupQuery>
 {

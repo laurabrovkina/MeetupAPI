@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace MeetupAPI.Health;
+namespace Health;
 
 public class DatabaseHealthCheck : IHealthCheck
 {

@@ -1,12 +1,12 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
-using MeetupAPI.ErrorHandling.Exceptions;
+using ErrorHandling.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace MeetupAPI.ErrorHandling;
+namespace ErrorHandling;
 
 public class ExceptionHandlingMiddleware
 {
