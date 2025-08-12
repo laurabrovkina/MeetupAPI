@@ -37,6 +37,8 @@ public class CreateLectureControllerTests : IAsyncLifetime
     // This test will be skipped only on environment with name set up to "staging"
     // Look at the deployment.yaml for more details
     [CustomFact]
+    // Or use `BeforeAfter` to set environment to particular stage for this test
+    // [BeforeAfter]
     public async Task Create_ReturnsCreated_WhenLectureCreated()
     {
         // Arrange
@@ -55,7 +57,7 @@ public class CreateLectureControllerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Create_ReturnsLecutre_WhenLectureCreated()
+    public async Task Create_ReturnsLecture_WhenLectureCreated()
     {
         // Arrange
         var meetup = _meetupFaker.Generate();
@@ -71,9 +73,13 @@ public class CreateLectureControllerTests : IAsyncLifetime
         // Assert
         var createdResponse = await _client.GetAsync($"api/meetup/{meetup.Name}/lecture");
         var createdLecture = await createdResponse.Content.ReadFromJsonAsync<List<LectureDto>>();
-        createdLecture.FirstOrDefault().Author.Should().Be(lecture.Author);
-        createdLecture.FirstOrDefault().Topic.Should().Be(lecture.Topic);
-        createdLecture.FirstOrDefault().Description.Should().Be(lecture.Description);
+        // if this assertion is skipped, in case 'createdLecture' is null,
+        // the whole test will pass even so the collection is null
+        // and the test has to fail in this case
+        createdLecture.Should().NotBeNull();
+        createdLecture?.First()?.Author.Should().Be(lecture.Author);
+        createdLecture?.First()?.Topic.Should().Be(lecture.Topic);
+        createdLecture?.First()?.Description.Should().Be(lecture.Description);
     }
 
     public Task DisposeAsync() => _resetDatabase();
