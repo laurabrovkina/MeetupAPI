@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Authorization;
 using AutoMapper;
 using Entities;
@@ -38,7 +39,7 @@ public class MeetupController : ControllerBase
     }
 
     [HttpGet]
-    //[NationalityFilter("German,Russian")]
+    //[NationalityFilter("German, French")]
     [AllowAnonymous]
     public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery] MeetupQuery query)
     {
@@ -110,7 +111,7 @@ public class MeetupController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin,Moderator")]
-    public ActionResult Post([FromBody] MeetupDto model)
+    public async Task<ActionResult> Post([FromBody] MeetupDto model)
     {
         using var _ = _metrics.MeasureRequestDuration();
         _metrics.IncreaseMeetupRequestCount();
@@ -124,8 +125,9 @@ public class MeetupController : ControllerBase
 
         var meetup = Meetup.Create(model, userId);
 
-        _meetupContext.Meetups.Add(meetup);
-        _meetupContext.SaveChanges();
+        await _meetupContext.Meetups.AddAsync(meetup);
+        // Interceptor publishes the event
+        await _meetupContext.SaveChangesAsync();
 
         var key = meetup.Name.Replace(" ", "-").ToLower();
         return Created("api/meetup/" + key, null);
