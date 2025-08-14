@@ -2,7 +2,7 @@
 
 namespace MeetupAPI.Models;
 
-public class LectureDto
+public class LectureRequest
 {
     [Required]
     [MinLength(5)]

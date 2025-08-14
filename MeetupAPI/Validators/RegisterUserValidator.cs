@@ -5,7 +5,7 @@ using MeetupAPI.Models;
 
 namespace Validators;
 
-public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
+public class RegisterUserValidator : AbstractValidator<RegisterUserRequest>
 {
     public RegisterUserValidator(MeetupContext meetupContext)
     {

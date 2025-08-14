@@ -29,18 +29,18 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public ActionResult Login([FromBody]RegisterUserDto registerUserDto)
+    public ActionResult Login([FromBody]RegisterUserRequest registerUserRequest)
     {
         var user = _meetupContext.Users
             .Include(user => user.Role)
-            .FirstOrDefault(user => user.Email == registerUserDto.Email);
+            .FirstOrDefault(user => user.Email == registerUserRequest.Email);
 
         if (user == null)
         {
             throw new ApiResponseException(HttpStatusCode.BadRequest, "Invalid username or password");
         }
 
-        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserDto.Password);
+        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, registerUserRequest.Password);
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
         {
@@ -53,23 +53,23 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public ActionResult Register([FromBody]RegisterUserDto registerUserDto)
+    public ActionResult Register([FromBody]RegisterUserRequest registerUserRequest)
     {
         if (!ModelState.IsValid)
         {
-            ErrorMessages.BadRequestMessage(registerUserDto, ModelState);
+            ErrorMessages.BadRequestMessage(registerUserRequest, ModelState);
         }
 
         var newUser = new User
         {
-            Email = registerUserDto.Email,
-            Nationality = registerUserDto.Nationality,
-            DateOfBirth = registerUserDto.DateOfBirth,
+            Email = registerUserRequest.Email,
+            Nationality = registerUserRequest.Nationality,
+            DateOfBirth = registerUserRequest.DateOfBirth,
             PasswordHash = null,
-            RoleId = registerUserDto.RoleId
+            RoleId = registerUserRequest.RoleId
         };
 
-        var passwordHash = _passwordHasher.HashPassword(newUser, registerUserDto.Password);
+        var passwordHash = _passwordHasher.HashPassword(newUser, registerUserRequest.Password);
         newUser.PasswordHash = passwordHash;
 
         _meetupContext.Users.Add(newUser);
@@ -80,31 +80,30 @@ public class AccountController : ControllerBase
 
     [HttpPut("edit")]
     [Authorize(Roles = "Admin,Moderator")]
-    public ActionResult Edit([FromBody] UpdateUserDto updateUserDto)
+    public ActionResult Edit([FromBody] UpdateUserRequest updateUserRequest)
     {
         var user = _meetupContext.Users
-            .FirstOrDefault(x => x.Email == updateUserDto.Email);
+            .FirstOrDefault(x => x.Email == updateUserRequest.Email);
 
         if (user == null)
         {
-            throw new ApiResponseException(HttpStatusCode.NotFound, $"User with email {updateUserDto.Email} has not been found");
+            throw new ApiResponseException(HttpStatusCode.NotFound, $"User with email {updateUserRequest.Email} has not been found");
         }
 
         if (!ModelState.IsValid)
         {
-            ErrorMessages.BadRequestMessage(updateUserDto, ModelState);
+            ErrorMessages.BadRequestMessage(updateUserRequest, ModelState);
         }
 
-        user.FirstName = updateUserDto.FirstName;
-        user.LastName = updateUserDto.LastName;
-        user.Nationality = updateUserDto.Nationality;
-        user.DateOfBirth = updateUserDto.DateOfBirth;
-        user.RoleId= updateUserDto.RoleId;
+        user.FirstName = updateUserRequest.FirstName;
+        user.LastName = updateUserRequest.LastName;
+        user.Nationality = updateUserRequest.Nationality;
+        user.DateOfBirth = updateUserRequest.DateOfBirth;
+        user.RoleId= updateUserRequest.RoleId;
 
-        if (updateUserDto.Password is not null
-            && updateUserDto.Password == updateUserDto.ConfirmPassword)
+        if (updateUserRequest.Password == updateUserRequest.ConfirmPassword)
         {
-            var passwordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
+            var passwordHash = _passwordHasher.HashPassword(user, updateUserRequest.Password);
             user.PasswordHash = passwordHash;
         }
 

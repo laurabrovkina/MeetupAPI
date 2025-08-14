@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace MeetupAPI.Models;
 
-public class MeetupDto
+public class MeetupRequest
 {
     [Required]
     [MinLength(3)]

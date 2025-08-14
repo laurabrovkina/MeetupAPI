@@ -1,12 +1,11 @@
-﻿using Entities;
-using FluentValidation;
+﻿using FluentValidation;
 using MeetupAPI.Models;
 
 namespace Validators;
 
-public class UserLoginValidator : AbstractValidator<UserLoginDto>
+public class UserLoginValidator : AbstractValidator<UserLoginRequest>
 {
-    public UserLoginValidator(MeetupContext meetupContext)
+    public UserLoginValidator()
     {
         RuleFor(x => x.Email).NotEmpty();
         RuleFor(x => x.Password).MinimumLength(6);

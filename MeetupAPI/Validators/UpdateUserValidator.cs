@@ -5,7 +5,7 @@ using MeetupAPI.Models;
 
 namespace Validators;
 
-public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
+public class UpdateUserValidator : AbstractValidator<UpdateUserRequest>
 {
     public UpdateUserValidator(MeetupContext meetupContext)
     {
@@ -15,7 +15,7 @@ public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
 
             if (!allowedRoleIds.Contains(value))
             {
-                context.AddFailure("RoleId", $"Role doesn't exist");
+                context.AddFailure("RoleId", "Role doesn't exist");
             }
         });
         RuleFor(x => x.Email).Custom((value, context) =>

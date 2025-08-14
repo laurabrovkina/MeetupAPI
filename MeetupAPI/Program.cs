@@ -115,6 +115,7 @@ builder.Services.AddHealthChecksUI(opt =>
     .AddInMemoryStorage();
 
 builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationRulesToSwagger();
 
@@ -123,10 +124,7 @@ builder.Services.AddScoped<IAuthorizationHandler, MeetupResourceOperationHandler
 builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
-builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
-builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginValidator>();
-builder.Services.AddScoped<IValidator<MeetupQuery>, MeetupQueryValidator>();
+
 builder.Services.AddDbContext<MeetupContext>((sp, option) =>
 {
     option.UseSqlServer(myDbConfig);

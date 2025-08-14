@@ -31,17 +31,17 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> EditAsync(UpdateUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> EditAsync(UpdateUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -80,7 +80,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> LoginAsync(RegisterUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -149,7 +149,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> RegisterAsync(RegisterUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -218,7 +218,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> EditAsync(UpdateUserDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> EditAsync(UpdateUserRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -841,17 +841,17 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> LectureDeleteAsync(string meetupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="MeetupApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Response> LectureGetAsync(string meetupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> LecturePostAsync(string meetupName, LectureDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> LecturePostAsync(string meetupName, LectureRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="MeetupApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Response> LectureDeleteAsync(string meetupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -891,76 +891,6 @@ namespace MyNamespace
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> LectureDeleteAsync(string meetupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-        {
-            if (meetupName == null)
-                throw new System.ArgumentNullException("meetupName");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                
-                    // Operation Path: "api/meetup/{meetupName}/lecture"
-                    urlBuilder_.Append("api/meetup/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(meetupName, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/lecture");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return new Response(status_, headers_);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new MeetupApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -1035,7 +965,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> LecturePostAsync(string meetupName, LectureDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> LecturePostAsync(string meetupName, LectureRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (meetupName == null)
                 throw new System.ArgumentNullException("meetupName");
@@ -1051,6 +981,76 @@ namespace MyNamespace
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/meetup/{meetupName}/lecture"
+                    urlBuilder_.Append("api/meetup/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(meetupName, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/lecture");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return new Response(status_, headers_);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new MeetupApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="MeetupApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<Response> LectureDeleteAsync(string meetupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            if (meetupName == null)
+                throw new System.ArgumentNullException("meetupName");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
@@ -1296,22 +1296,22 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response<MeetupResponsePagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> MeetupPostAsync(MeetupDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> MeetupPostAsync(MeetupRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response<MeetupDetailsDto>> MeetupGetAsync(string name, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response<MeetupResponse>> MeetupGetAsync(string name, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Response> MeetupPutAsync(string name, MeetupDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<Response> MeetupPutAsync(string name, MeetupRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
@@ -1355,7 +1355,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response<MeetupDetailsDtoPagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response<MeetupResponsePagedResult>> MeetupGetAsync(string searchPhrase, int? pageSize = null, int? pageNumber = null, string sortBy = null, SortDirection? sortDirection = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (searchPhrase == null)
                 throw new System.ArgumentNullException("searchPhrase");
@@ -1418,12 +1418,12 @@ namespace MyNamespace
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<MeetupDetailsDtoPagedResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MeetupResponsePagedResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new MeetupApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new Response<MeetupDetailsDtoPagedResult>(status_, headers_, objectResponse_.Object);
+                            return new Response<MeetupResponsePagedResult>(status_, headers_, objectResponse_.Object);
                         }
                         else
                         {
@@ -1448,7 +1448,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> MeetupPostAsync(MeetupDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> MeetupPostAsync(MeetupRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1517,7 +1517,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response<MeetupDetailsDto>> MeetupGetAsync(string name, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response<MeetupResponse>> MeetupGetAsync(string name, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (name == null)
                 throw new System.ArgumentNullException("name");
@@ -1562,12 +1562,12 @@ namespace MyNamespace
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<MeetupDetailsDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MeetupResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new MeetupApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return new Response<MeetupDetailsDto>(status_, headers_, objectResponse_.Object);
+                            return new Response<MeetupResponse>(status_, headers_, objectResponse_.Object);
                         }
                         else
                         {
@@ -1592,7 +1592,7 @@ namespace MyNamespace
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="MeetupApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Response> MeetupPutAsync(string name, MeetupDto body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<Response> MeetupPutAsync(string name, MeetupRequest body = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (name == null)
                 throw new System.ArgumentNullException("name");
@@ -1841,7 +1841,37 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LectureDto
+    public partial class INotification
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Lecture
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("author")]
+        public string Author { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("topic")]
+        public string Topic { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("meetup")]
+        public Meetup Meetup { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("meetupId")]
+        public System.Guid? MeetupId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LectureRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("author")]
@@ -1860,20 +1890,11 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class MeetupDetailsDto
+    public partial class Location
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("organizer")]
-        public string Organizer { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("date")]
-        public System.DateTimeOffset? Date { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
-        public bool? IsPrivate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("city")]
         public string City { get; set; }
@@ -1884,43 +1905,28 @@ namespace MyNamespace
         [System.Text.Json.Serialization.JsonPropertyName("postCode")]
         public string PostCode { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lectures")]
-        public System.Collections.Generic.ICollection<LectureDto> Lectures { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("meetup")]
+        public Meetup Meetup { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("meetupId")]
+        public System.Guid? MeetupId { get; set; }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class MeetupDetailsDtoPagedResult
+    public partial class Meetup
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("items")]
-        public System.Collections.Generic.ICollection<MeetupDetailsDto> Items { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("domainEvents")]
+        public System.Collections.Generic.ICollection<INotification> DomainEvents { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("totalPages")]
-        public int? TotalPages { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("itemsFrom")]
-        public int? ItemsFrom { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("itemsTo")]
-        public int? ItemsTo { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("totalItemsCount")]
-        public int? TotalItemsCount { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class MeetupDto
-    {
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid? Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 3)]
         public string Name { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("organizer")]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Organizer { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("date")]
@@ -1928,6 +1934,18 @@ namespace MyNamespace
 
         [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
         public bool? IsPrivate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public Location Location { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lectures")]
+        public System.Collections.Generic.ICollection<Lecture> Lectures { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdById")]
+        public int? CreatedById { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
+        public User CreatedBy { get; set; }
 
     }
 
@@ -1955,7 +1973,73 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class RegisterUserDto
+    public partial class MeetupRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 3)]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("organizer")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Organizer { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("date")]
+        public System.DateTimeOffset? Date { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool? IsPrivate { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MeetupResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("fullLocation")]
+        public string FullLocation { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("organizer")]
+        public string Organizer { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("date")]
+        public System.DateTimeOffset? Date { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool? IsPrivate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lectures")]
+        public System.Collections.Generic.ICollection<Lecture> Lectures { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MeetupResponsePagedResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<MeetupResponse> Items { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalPages")]
+        public int? TotalPages { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("itemsFrom")]
+        public int? ItemsFrom { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("itemsTo")]
+        public int? ItemsTo { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalItemsCount")]
+        public int? TotalItemsCount { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RegisterUserRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
@@ -1979,6 +2063,18 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Role
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("roleName")]
+        public string RoleName { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SortDirection
     {
 
@@ -1989,7 +2085,7 @@ namespace MyNamespace
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UpdateUserDto
+    public partial class UpdateUserRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
@@ -2015,6 +2111,39 @@ namespace MyNamespace
 
         [System.Text.Json.Serialization.JsonPropertyName("roleId")]
         public int? RoleId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class User
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nationality")]
+        public string Nationality { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateOfBirth")]
+        public System.DateTimeOffset? DateOfBirth { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("passwordHash")]
+        public string PasswordHash { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("roleId")]
+        public int? RoleId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("role")]
+        public Role Role { get; set; }
 
     }
 

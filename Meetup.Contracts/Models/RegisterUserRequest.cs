@@ -1,6 +1,6 @@
 ﻿namespace MeetupAPI.Models;
 
-public class RegisterUserDto : UserLoginDto
+public class RegisterUserRequest : UserLoginRequest
 {
     public string Nationality { get; set; }
 
