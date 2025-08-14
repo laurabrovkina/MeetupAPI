@@ -1,4 +1,6 @@
-﻿namespace Entities;
+﻿using System;
+
+namespace Entities;
 
 public class Lecture
 {
@@ -8,5 +10,5 @@ public class Lecture
     public string Description { get; set; }
 
     public virtual Meetup Meetup { get; set; }
-    public int MeetupId { get; set; }
+    public Guid MeetupId { get; set; }
 }

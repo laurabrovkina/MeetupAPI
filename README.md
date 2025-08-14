@@ -5,8 +5,8 @@
 
 ## Database
 
-* As an improvement, the script and/or migration should be introduced to add Roles automatically to the database,
-  the SQL query should be run manually for now:
+* As a part of `create-database.sql` script running as a part of docker image, it adds Roles automatically to the 
+database with values:
 
 ```
 INSERT INTO 
@@ -222,7 +222,7 @@ Adding config to the api:
 
 Find out more details in the [article](https://www.softwaredeveloper.blog/initialize-mssql-in-docker-container).
 
-To build image on your machine:
+To build an image on your machine:
 
 ```
 docker build -t db-meetup . --no-cache
@@ -234,7 +234,7 @@ changes.
 Then, run the container:
 
 ```
-docker run -p 14033:1433 -d db-meetup
+docker run --name <container_name> -p 14033:1433 -d db-meetup
 ```
 
 Next, you can establish a connection to the SQL Server using SQL Server Management Studio (SSMS). When doing so from

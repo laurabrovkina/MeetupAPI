@@ -1,3 +1,4 @@
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Entities;
@@ -14,7 +15,12 @@ public class MeetupResourceOperationHandler : AuthorizationHandler<ResourceOpera
             context.Succeed(requirement);
         }
 
-        var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
+        var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+        {
+            throw new ArgumentNullException(nameof(userId), "User Id has not found");
+        }
 
         if (resource.CreatedById == int.Parse(userId))
         {
