@@ -12,13 +12,16 @@
         <PackageReference Include="AspNetCore.HealthChecks.UI"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage"/>
+        <PackageReference Include="Facet" />
+        <PackageReference Include="Facet.Extensions" />
+        <PackageReference Include="Facet.Extensions.EFCore" />
+        <PackageReference Include="Facet.Mapping" />
         <PackageReference Include="Mediator.Abstractions" />
         <PackageReference Include="Mediator.SourceGenerator">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" />
-        <PackageReference Include="AutoMapper"/>
         <PackageReference Include="Azure.Identity"/>
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />

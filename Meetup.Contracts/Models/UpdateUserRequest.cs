@@ -1,6 +1,6 @@
 ﻿namespace MeetupAPI.Models;
 
-public class UpdateUserDto : UserLoginDto
+public class UpdateUserRequest : UserLoginRequest
 {
     public string FirstName { get; set; }
 

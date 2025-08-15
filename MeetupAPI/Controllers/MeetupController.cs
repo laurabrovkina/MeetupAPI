@@ -6,15 +6,16 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Authorization;
-using AutoMapper;
 using Entities;
 using ErrorHandling;
 using ErrorHandling.Exceptions;
+using Facet.Extensions;
 using Filters;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MeetupResponse = Mappings.MeetupResponse;
 
 namespace Controllers;
 
@@ -24,16 +25,14 @@ namespace Controllers;
 public class MeetupController : ControllerBase
 {
     private readonly IAuthorizationService _authorizationService;
-    private readonly IMapper _mapper;
     private readonly MeetupContext _meetupContext;
     private readonly IMeetupApiMetrics _metrics;
 
-    public MeetupController(MeetupContext meetupContext, IMapper mapper,
+    public MeetupController(MeetupContext meetupContext,
         IAuthorizationService authorizationService,
         IMeetupApiMetrics metrics)
     {
         _meetupContext = meetupContext;
-        _mapper = mapper;
         _authorizationService = authorizationService;
         _metrics = metrics;
     }
@@ -41,7 +40,7 @@ public class MeetupController : ControllerBase
     [HttpGet]
     //[NationalityFilter("German, French")]
     [AllowAnonymous]
-    public ActionResult<PagedResult<MeetupDetailsDto>> GetAll([FromQuery] MeetupQuery query)
+    public ActionResult<PagedResult<MeetupResponse>> GetAll([FromQuery] MeetupQuery query)
     {
         using var _ = _metrics.MeasureRequestDuration();
 
@@ -79,9 +78,8 @@ public class MeetupController : ControllerBase
 
         var totalCount = baseQuery.Count();
 
-        var meetupDtos = _mapper.Map<List<MeetupDetailsDto>>(meetups);
-
-        var result = new PagedResult<MeetupDetailsDto>(meetupDtos, totalCount, query.PageNumber, query.PageSize);
+        var meetupDtos = meetups.Select(x => x.ToFacet<Meetup, MeetupResponse>()).ToList();
+        var result = new PagedResult<MeetupResponse>(meetupDtos, totalCount, query.PageNumber, query.PageSize);
 
         return Ok(result);
     }
@@ -91,7 +89,7 @@ public class MeetupController : ControllerBase
     // Authorisation policy that checks if the user has a claim nationality
     //[Authorize(Policy = "HasNationality")]
     //[Authorize(Policy = "AtLeast18")]
-    public ActionResult<MeetupDetailsDto> Get(string name)
+    public ActionResult<MeetupResponse> Get(string name)
     {
         using var _ = _metrics.MeasureRequestDuration();
 
@@ -105,13 +103,13 @@ public class MeetupController : ControllerBase
             throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {name} has not been found");
         }
 
-        var meetupDto = _mapper.Map<MeetupDetailsDto>(meetup);
+        var meetupDto = meetup.ToFacet<Meetup, MeetupResponse>();
         return Ok(meetupDto);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,Moderator")]
-    public async Task<ActionResult> Post([FromBody] MeetupDto model)
+    public async Task<ActionResult> Post([FromBody] MeetupRequest model)
     {
         using var _ = _metrics.MeasureRequestDuration();
         _metrics.IncreaseMeetupRequestCount();
@@ -134,7 +132,7 @@ public class MeetupController : ControllerBase
     }
 
     [HttpPut("{name}")]
-    public ActionResult Put(string name, [FromBody] MeetupDto model)
+    public ActionResult Put(string name, [FromBody] MeetupRequest model)
     {
         using var _ = _metrics.MeasureRequestDuration();
 

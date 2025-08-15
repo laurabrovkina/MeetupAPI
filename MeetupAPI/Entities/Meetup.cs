@@ -20,7 +20,7 @@ public class Meetup : AggregateRoot
     public User CreatedBy { get; set; }
 
     // static factory method that you use instead of constructor to give you back your entity
-    public static Meetup Create(MeetupDto model, string userId)
+    public static Meetup Create(MeetupRequest model, string userId)
     {
         var meetup = new Meetup
         {

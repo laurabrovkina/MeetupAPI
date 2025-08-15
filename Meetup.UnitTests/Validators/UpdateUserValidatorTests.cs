@@ -21,7 +21,7 @@ public class UpdateUserValidatorTests
     {
         // Arrange           
         var validator = new UpdateUserValidator(_meetupContext);
-        var updateUserDto = new UpdateUserDto { RoleId = 111 }; // Assuming 111 is an invalid RoleId
+        var updateUserDto = new UpdateUserRequest { RoleId = 111 }; // Assuming 111 is an invalid RoleId
 
         // Act
         var result = validator.TestValidate(updateUserDto);
@@ -36,7 +36,7 @@ public class UpdateUserValidatorTests
     {
         // Arrange
         var validator = new UpdateUserValidator(_meetupContext);
-        var updateUserDto = new UpdateUserDto { Email = "nonexistent@example.com" }; // Assuming the email doesn't exist in the database
+        var updateUserDto = new UpdateUserRequest { Email = "nonexistent@example.com" }; // Assuming the email doesn't exist in the database
 
         // Act
         var result = validator.TestValidate(updateUserDto);
@@ -51,7 +51,7 @@ public class UpdateUserValidatorTests
     {
         // Arrange
         var validator = new UpdateUserValidator(_meetupContext);
-        var updateUserDto = new UpdateUserDto { RoleId = 1, Email = "existing@example.com" }; // Assuming RoleId and email exist in the database
+        var updateUserDto = new UpdateUserRequest { RoleId = 1, Email = "existing@example.com" }; // Assuming RoleId and email exist in the database
 
         // Act
         var result = validator.TestValidate(updateUserDto);

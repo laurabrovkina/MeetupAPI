@@ -9,8 +9,11 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="8.0.1" />
     <PackageVersion Include="Aspire.Hosting" Version="9.2.1" />
-    <PackageVersion Include="AutoMapper" Version="13.0.1" />
     <PackageVersion Include="Azure.Identity" Version="1.13.1" />
+    <PackageVersion Include="Facet" Version="2.0.1" />
+    <PackageVersion Include="Facet.Extensions" Version="2.0.1" />
+    <PackageVersion Include="Facet.Extensions.EFCore" Version="2.0.1" />
+    <PackageVersion Include="Facet.Mapping" Version="2.0.1" />
     <PackageVersion Include="FluentAssertions" Version="6.12.1" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageVersion Include="FluentValidator" Version="2.0.4" />
