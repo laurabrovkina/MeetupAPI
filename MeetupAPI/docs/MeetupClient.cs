@@ -1875,13 +1875,9 @@ namespace MyNamespace
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("author")]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 5)]
         public string Author { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("topic")]
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.StringLength(int.MaxValue, MinimumLength = 5)]
         public string Topic { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]

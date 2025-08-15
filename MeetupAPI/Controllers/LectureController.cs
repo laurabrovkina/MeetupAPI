@@ -1,14 +1,12 @@
 ﻿using System.Linq;
 using System.Net;
 using Entities;
-using ErrorHandling;
 using ErrorHandling.Exceptions;
-using Facet.Extensions;
-using Mappings;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Lecture = MeetupAPI.Models.Lecture;
 
 namespace Controllers;
 
@@ -36,18 +34,24 @@ public class LectureController : ControllerBase
             throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
-        var lectures = meetup.Lectures.Select(x => x.ToFacet<Lecture, LectureRequest>());
+        var lectures = new LectureResponse
+        {
+            Lectures = meetup.Lectures.Select(x => new Lecture
+            {
+                Author = x.Author,
+                Topic = x.Topic,
+                Description = x.Description
+            }).ToList(),
+            MeetupName = meetup.Name,
+            MeetupOrganizer = meetup.Organizer
+        };
 
         return Ok(lectures);
     }
 
     [HttpPost]
-    public ActionResult Post(string meetupName, [FromBody] LectureRequest model)
+    public ActionResult Post(string meetupName, [FromBody] LectureRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            ErrorMessages.BadRequestMessage(model, ModelState);
-        }
         var meetup = _meetupContext.Meetups
             .Include(m => m.Lectures)
             .FirstOrDefault(m => m.Name.Replace(" ", "-").ToLower() == meetupName.ToLower());
@@ -57,9 +61,15 @@ public class LectureController : ControllerBase
             throw new ApiResponseException(HttpStatusCode.NotFound, $"Meetup with name {meetupName} has not been found");
         }
 
-        // this is not set correctly
-        // we need to find a way to map request to lecture entity in DB
-        var lecture = model.ToFacet<LectureRequest, Lecture>();
+        var lecture = new Entities.Lecture
+        {
+            Author = request.Author,
+            Topic = request.Topic,
+            Description = request.Description,
+            Meetup = meetup,
+            MeetupId = meetup.Id
+        };
+        
         meetup.Lectures.Add(lecture);
         _meetupContext.SaveChanges();
 

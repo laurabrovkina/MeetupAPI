@@ -289,17 +289,14 @@ components:
           format: uuid
       additionalProperties: false
     LectureRequest:
-      required:
-        - author
-        - topic
       type: object
       properties:
         author:
-          minLength: 5
           type: string
+          nullable: true
         topic:
-          minLength: 5
           type: string
+          nullable: true
         description:
           type: string
           nullable: true

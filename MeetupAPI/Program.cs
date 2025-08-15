@@ -131,7 +131,6 @@ builder.Services.AddDbContext<MeetupContext>((sp, option) =>
     option.AddInterceptors(sp.GetRequiredService<DomainEventsInterceptor>());
 });
 builder.Services.AddScoped<MeetupSeeder>();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeetupAPI", Version = "v1" }); });
 
 builder.Services.AddCors(options => { options.AddPolicy("FrontEndClient", 

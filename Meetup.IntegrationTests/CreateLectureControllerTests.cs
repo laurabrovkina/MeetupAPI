@@ -1,13 +1,13 @@
 using Bogus;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Mappings;
+using MeetupAPI.Models;
 using Xunit;
 
 namespace Meetup.IntegrationTests;
@@ -18,7 +18,8 @@ public class CreateLectureControllerTests : IAsyncLifetime
     private readonly HttpClient _client;
     private readonly Func<Task> _resetDatabase;
     private readonly Faker<MeetupResponse> _meetupFaker;
-    private readonly Faker<LectureDto> _lectureFaker;
+    private readonly Faker<LectureResponse> _lectureResponseFaker;
+    private readonly Faker<Lecture> _lectureFaker;
 
     public CreateLectureControllerTests(TestFixture testFixture)
     {
@@ -28,7 +29,10 @@ public class CreateLectureControllerTests : IAsyncLifetime
         _meetupFaker = new Faker<MeetupResponse>()
             .RuleFor(x => x.Name, faker => faker.Lorem.Word())
             .RuleFor(x => x.Organizer, faker => faker.Person.FirstName);
-        _lectureFaker = new Faker<LectureDto>()
+        _lectureResponseFaker = new Faker<LectureResponse>()
+            .RuleFor(x => x.MeetupName, faker => faker.Lorem.Word())
+            .RuleFor(x => x.MeetupOrganizer, faker => faker.Person.FirstName);
+        _lectureFaker = new Faker<Lecture>()
             .RuleFor(x => x.Author, faker => faker.Person.FullName)
             .RuleFor(x => x.Topic, faker => faker.Lorem.Word())
             .RuleFor(x => x.Description, faker => faker.Lorem.Sentence());
@@ -72,14 +76,16 @@ public class CreateLectureControllerTests : IAsyncLifetime
 
         // Assert
         var createdResponse = await _client.GetAsync($"api/meetup/{meetup.Name}/lecture");
-        var createdLecture = await createdResponse.Content.ReadFromJsonAsync<List<LectureDto>>();
+        var createdLecture = await createdResponse.Content.ReadFromJsonAsync<LectureResponse>();
         // if this assertion is skipped, in case 'createdLecture' is null,
         // the whole test will pass even so the collection is null
         // and the test has to fail in this case
         createdLecture.Should().NotBeNull();
-        createdLecture?.First()?.Author.Should().Be(lecture.Author);
-        createdLecture?.First()?.Topic.Should().Be(lecture.Topic);
-        createdLecture?.First()?.Description.Should().Be(lecture.Description);
+        createdLecture?.MeetupName.Should().Be(meetup.Name);
+        createdLecture?.MeetupOrganizer.Should().Be(meetup.Organizer);
+        createdLecture?.Lectures.First().Author.Should().Be(lecture.Author);
+        createdLecture?.Lectures.First().Topic.Should().Be(lecture.Topic);
+        createdLecture?.Lectures.First().Description.Should().Be(lecture.Description);
     }
 
     public Task DisposeAsync() => _resetDatabase();
