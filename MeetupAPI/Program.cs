@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using Authorization;
 using Entities;
@@ -10,7 +9,6 @@ using Health;
 using HealthChecks.UI.Client;
 using Identity;
 using Interceptors;
-using MeetupAPI.Models;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +26,6 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Options;
-using Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +35,6 @@ builder.Services.AddMediator();
 builder.Services.AddScoped<DomainEventsInterceptor>();
 
 var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? new JwtOptions();
-var myDbConfig = builder.Configuration.GetConnectionString("MeetupDb");
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("jwt"));
 builder.Services.Configure<DbOptions>(builder.Configuration.GetSection("ConnectionStrings"));
 
@@ -98,10 +94,8 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("HasNationality", policy => policy.RequireClaim("Nationality", "German", "English"))
     .AddPolicy("AtLeast18", policy => policy.AddRequirements(new MinimumAgeRequirement(18)));
 
-builder.Services
-    .AddHealthChecks()
-    //failureStatus: HealthStatus.Unhealthy); // pre-set Health Check for MSSQL
-    .AddCheck<DatabaseHealthCheck>("Database");
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("Database", tags: [ "ready", "startup"]);
 
 //adding healthchecks UI
 builder.Services.AddHealthChecksUI(opt =>
@@ -125,12 +119,21 @@ builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeHandler>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
-builder.Services.AddDbContext<MeetupContext>((sp, option) =>
+builder.Services.AddSingleton<DomainEventsInterceptor>();
+// previously it was AddDbContext<MeetupContext>
+// with the implementation that also has a scope:
+// builder.Services.AddDbContext<MeetupContext>((sp, option) =>
+// {
+//     option.UseSqlServer(myDbConfig);
+//     option.AddInterceptors(sp.GetRequiredService<DomainEventsInterceptor>());
+// });
+// but we changed it to use the factory:
+builder.Services.AddDbContextFactory<MeetupContext>(option =>
 {
-    option.UseSqlServer(myDbConfig);
-    option.AddInterceptors(sp.GetRequiredService<DomainEventsInterceptor>());
+    option.UseSqlServer(builder.Configuration.GetConnectionString("MeetupDb"));
 });
 builder.Services.AddScoped<MeetupSeeder>();
+
 builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "MeetupAPI", Version = "v1" }); });
 
 builder.Services.AddCors(options => { options.AddPolicy("FrontEndClient", 
@@ -166,12 +169,22 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.MapHealthChecks("/healthz", new HealthCheckOptions
 {
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse // Returns UI-compatible JSON format
 });
 app.MapHealthChecksUI();
+
+app.MapHealthChecks("health/startup", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("startup")
+});
+app.MapHealthChecks("health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 //SeedDatabase();
 
