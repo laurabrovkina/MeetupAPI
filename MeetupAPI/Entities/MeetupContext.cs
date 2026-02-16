@@ -14,6 +14,8 @@ public class MeetupContext : DbContext
     public DbSet<Meetup> Meetups { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Lecture> Lectures { get; set; }
+    
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,5 +33,19 @@ public class MeetupContext : DbContext
         modelBuilder.Entity<Meetup>()
             .HasMany(m => m.Lectures)
             .WithOne(l => l.Meetup);
+
+        modelBuilder.Entity<RefreshToken>()
+            .HasKey(r => r.Id);
+        
+        modelBuilder.Entity<RefreshToken>()
+            .Property(r => r.Token).HasMaxLength(200);
+        
+        modelBuilder.Entity<RefreshToken>()
+            .HasIndex(r => r.Token).IsUnique();
+            
+        modelBuilder.Entity<RefreshToken>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId);
     }
 }

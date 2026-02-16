@@ -20,12 +20,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E331461F-9393-4C32-A694-739235CE89E1}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
-		create-database.sql = create-database.sql
-		Dockerfile = Dockerfile
-		entrypoint.sh = entrypoint.sh
-		run-initialization.sh = run-initialization.sh
 		README.md = README.md
 		.editorconfig = .editorconfig
+		compose.yaml = compose.yaml
+		run-initialization.sh = run-initialization.sh
+		entrypoint.sh = entrypoint.sh
+		Dockerfile = Dockerfile
+		create-database.sql = create-database.sql
 	EndProjectSection
 EndProject
 Global
