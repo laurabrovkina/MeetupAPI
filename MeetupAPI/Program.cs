@@ -25,7 +25,6 @@ using Microsoft.OpenApi.Models;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +35,6 @@ builder.Services.AddScoped<DomainEventsInterceptor>();
 
 var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? new JwtOptions();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("jwt"));
-builder.Services.Configure<DbOptions>(builder.Configuration.GetSection("ConnectionStrings"));
 
 builder.Logging.AddOpenTelemetry(x =>
 {
@@ -90,11 +88,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorizationBuilder()
+builder.Services
+    .AddAuthorizationBuilder()
     .AddPolicy("HasNationality", policy => policy.RequireClaim("Nationality", "German", "English"))
     .AddPolicy("AtLeast18", policy => policy.AddRequirements(new MinimumAgeRequirement(18)));
 
-builder.Services.AddHealthChecks()
+builder.Services
+    .AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("Database", tags: [ "ready", "startup"]);
 
 //adding healthchecks UI
