@@ -39,6 +39,24 @@ paths:
       responses:
         '200':
           description: OK
+  /api/account/refresh-token:
+    post:
+      tags:
+        - Account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: OK
   /api/account/edit:
     put:
       tags:
@@ -54,6 +72,20 @@ paths:
           application/*+json:
             schema:
               $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: OK
+  '/api/account/{userId}/refresh-tokens':
+    delete:
+      tags:
+        - Account
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
       responses:
         '200':
           description: OK
@@ -441,6 +473,13 @@ components:
         totalItemsCount:
           type: integer
           format: int32
+      additionalProperties: false
+    RefreshTokenRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          nullable: true
       additionalProperties: false
     RegisterUserRequest:
       type: object
