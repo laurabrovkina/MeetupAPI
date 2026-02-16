@@ -1,11 +1,14 @@
+using System;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using Entities;
 using ErrorHandling;
 using ErrorHandling.Exceptions;
 using Identity;
 using MeetupAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,14 +21,17 @@ public class AccountController : ControllerBase
     private readonly IJwtProvider _jwtProvider;
     private readonly MeetupContext _meetupContext;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AccountController(MeetupContext meetupContext,
         IPasswordHasher<User> passwordHasher,
-        IJwtProvider jwtProvider)
+        IJwtProvider jwtProvider,
+        IHttpContextAccessor httpContextAccessor)
     {
         _meetupContext = meetupContext;
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [HttpPost("login")]
@@ -48,8 +54,24 @@ public class AccountController : ControllerBase
         }
 
         var token = _jwtProvider.GenerateJwtToken(user);
+        var refreshToken = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Token = _jwtProvider.GenerateRefreshToken(),
+            ExpiresOnUtc = DateTime.UtcNow.AddDays(7)
+        };
+        
+        var response = new RegisterUserResponse
+        {
+            AccessToken = token,
+            RefreshToken = refreshToken.Token
+        };
+        
+        _meetupContext.RefreshTokens.Add(refreshToken);
+         _meetupContext.SaveChanges();
 
-        return Ok(token);
+        return Ok(response);
     }
 
     [HttpPost("register")]
@@ -76,6 +98,35 @@ public class AccountController : ControllerBase
         _meetupContext.SaveChanges();
 
         return Ok();
+    }
+
+    [HttpPost("refresh-token")]
+    public ActionResult LoginWithRefreshToken([FromBody]RefreshTokenRequest refreshTokenRequest)
+    {
+        var refreshToken = _meetupContext.RefreshTokens
+            .Include(r => r.User)
+                .ThenInclude(u => u.Role)
+            .FirstOrDefault(r => r.Token == refreshTokenRequest.RefreshToken);
+
+        if (refreshToken == null || refreshToken.ExpiresOnUtc < DateTime.UtcNow)
+        {
+            throw new ApiResponseException(HttpStatusCode.BadRequest,"The refresh token has expired");
+        }
+        
+        var accessToken = _jwtProvider.GenerateJwtToken(refreshToken.User);
+        
+        refreshToken.Token = _jwtProvider.GenerateRefreshToken();
+        refreshToken.ExpiresOnUtc = DateTime.UtcNow.AddDays(7);
+        
+        _meetupContext.SaveChanges();
+
+        var result = new RefreshTokenResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken.Token
+        };
+
+        return Ok(result);
     }
 
     [HttpPut("edit")]
