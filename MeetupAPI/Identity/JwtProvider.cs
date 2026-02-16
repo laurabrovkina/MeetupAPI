@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Entities;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +25,6 @@ public class JwtProvider : IJwtProvider
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Role, user.Role.RoleName),
             new(ClaimTypes.Name, user.Email),
-            new("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy"))
         };
 
         if (!string.IsNullOrEmpty(user.Nationality))
@@ -33,21 +33,31 @@ public class JwtProvider : IJwtProvider
                 new Claim("Nationality", user.Nationality)
                 );
         }
+        
+        if (user.DateOfBirth is not null)
+        {
+            claims.Add(
+                new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("dd-MM-yyyy"))
+            );
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.JwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expires = DateTime.Now.AddDays(_jwtOptions.JwtExpireDays);
 
         var token = new JwtSecurityToken(
             _jwtOptions.JwtIssuer,
             _jwtOptions.JwtIssuer,
             claims,
-            expires: expires,
+            expires: DateTime.UtcNow.AddMinutes(_jwtOptions.JwtExpireInMinutes),
             signingCredentials: creds
         );
 
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }
