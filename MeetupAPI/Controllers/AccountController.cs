@@ -162,4 +162,29 @@ public class AccountController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{userId}/refresh-tokens")]
+    public ActionResult RevokeRefreshTokens([FromRoute]int userId)
+    {
+        if (userId != GetCurrentUserId())
+        {
+            throw new ApiResponseException(HttpStatusCode.Forbidden, "You are not authorized to revoke");
+        }
+        
+        _meetupContext.RefreshTokens
+            .Where(r => r.UserId == userId)
+            .ExecuteDelete();
+        
+        return NoContent();
+    }
+
+    private int? GetCurrentUserId()
+    {
+        int.TryParse(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier),
+            out var currentUserId);
+        
+        return currentUserId > 0
+            ? currentUserId
+            : null;
+    }
 }

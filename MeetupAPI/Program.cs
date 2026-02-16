@@ -36,6 +36,8 @@ builder.Services.AddScoped<DomainEventsInterceptor>();
 var jwtOptions = builder.Configuration.GetSection("jwt").Get<JwtOptions>() ?? new JwtOptions();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("jwt"));
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Logging.AddOpenTelemetry(x =>
 {
     x.IncludeScopes = true;
