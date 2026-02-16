@@ -23,7 +23,9 @@ public class MeetupContext : DbContext
             .HasOne(u => u.CreatedBy);
 
         modelBuilder.Entity<User>()
-            .HasOne(u => u.Role);
+            .HasOne(u => u.Role)
+            .WithMany()
+            .HasForeignKey(u => u.RoleId);
 
         modelBuilder.Entity<Meetup>()
             .HasOne(m => m.Location)
