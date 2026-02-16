@@ -1,0 +1,9 @@
+﻿services:
+  meetup-db:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: meetup-db
+    environment:
+      - MSSQL_SA_PASSWORD=CorrectHorseBatteryStapleFor$
+      - ACCEPT_EULA=Y
+    ports:
+      - "14033:1433"
