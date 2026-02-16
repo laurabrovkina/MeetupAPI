@@ -164,6 +164,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpDelete("{userId}/refresh-tokens")]
+    [Authorize]
     public ActionResult RevokeRefreshTokens([FromRoute]int userId)
     {
         if (userId != GetCurrentUserId())
