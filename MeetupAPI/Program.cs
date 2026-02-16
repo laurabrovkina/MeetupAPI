@@ -165,10 +165,12 @@ else
 IdentityModelEventSource.ShowPII = true;
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthorization();
 
 app.MapControllers();
 
@@ -188,7 +190,7 @@ app.MapHealthChecks("health/ready", new HealthCheckOptions
     Predicate = check => check.Tags.Contains("ready")
 });
 
-//SeedDatabase();
+SeedDatabase();
 
 app.Run();
 

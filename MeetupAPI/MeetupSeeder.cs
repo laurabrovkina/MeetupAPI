@@ -16,6 +16,11 @@ public class MeetupSeeder
     {
         if (_meetupContext.Database.CanConnect())
         {
+            if (!_meetupContext.Roles.Any())
+            {
+                InsertBasicRoles();
+            }
+            
             if (!_meetupContext.Meetups.Any())
             {
                 InsertSampleData();
@@ -23,11 +28,36 @@ public class MeetupSeeder
         }
     }
 
+    // INSERT INTO 
+    //     [MeetupDb].[dbo].[Roles]
+    // VALUES ('User'),('Moderator'),('Admin')
+    private void InsertBasicRoles()
+    {
+        var roles = new List<Role>
+        {
+            new()
+            {
+                RoleName = "User"
+            },
+            new()
+            {
+                RoleName = "Moderator"
+            },
+            new()
+            {
+                RoleName = "Admin"
+            }
+        };
+        
+        _meetupContext.Roles.AddRange(roles);
+        _meetupContext.SaveChanges();
+    }
+
     private void InsertSampleData()
     {
         var meetups = new List<Meetup>
         {
-            new Meetup
+            new()
             {
                 Name = "Web summit",
                 Date = DateTime.Now.AddDays(7),
@@ -41,7 +71,7 @@ public class MeetupSeeder
                 },
                 Lectures = new List<Lecture>
                 {
-                    new Lecture
+                    new()
                     {
                         Author = "Bob Clark",
                         Topic = "Modern browsers",
@@ -49,7 +79,7 @@ public class MeetupSeeder
                     }
                 }
             },
-            new Meetup
+            new()
             {
                 Name = "4Devs",
                 Date = DateTime.Now.AddDays(7),
@@ -63,13 +93,13 @@ public class MeetupSeeder
                 },
                 Lectures = new List<Lecture>
                 {
-                    new Lecture
+                    new()
                     {
                         Author = "Will Smith",
                         Topic = "React.js",
                         Description = "Redux introduction"
                     },
-                    new Lecture
+                    new()
                     {
                         Author = "John Cena",
                         Topic = "Angular store",
