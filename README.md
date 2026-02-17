@@ -5,6 +5,8 @@
 
 ## Database
 
+**NOTE**: This is obsolete approach, it got replaced with `docker-compose` file and running migrations after a container is ready.
+The old files are still there for an example purpose.
 * As a part of `create-database.sql` script running as a part of docker image, it adds Roles automatically to the 
 database with values:
 
@@ -13,6 +15,27 @@ INSERT INTO
 [MeetupDb].[dbo].[Roles]
 VALUES ('User'),('Moderator'),('Admin')
 ```
+## Database spins with MS SQL image and EF migrations
+* This way was set up and works asa expected
+* First step is to run `compose.yaml` and wait the container to be running
+* Some env variables were updated:
+```csharp
+    environment:
+      - MSSQL_SA_PASSWORD=CorrectHorseBatteryStapleFor$
+      - ACCEPT_EULA=Y
+    ports:
+      - "14033:1433"
+```
+* Apply migrations on that new container
+* Remove old ones if the migrations got messed up
+```csharp
+# Clean slate
+dotnet ef database drop --context MeetupContext --force
+dotnet ef migrations add InitialCreate --context MeetupContext
+dotnet ef database update --context MeetupContext
+```
+* Note: for some reason it started to complain about multiple db contexts that is wgy `--context` key is used
+* The data seeder got fixed, now it is adding `Roles` if they don't exist in DB and also add some test meetups
 
 ## Enabling Central Package Management
 
@@ -38,6 +61,18 @@ The other projects would have only a package names included in them, e.g.:
 ```
 
 [Microsoft Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management)
+
+## Auth and Refresh token
+* Auth was created in the beginning on this project
+* We've added a refresh token recently, there is a new method in `IJwtProvider`:
+```csharp
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+    }
+```
+* There are 2 new endpoints `api/account/refresh-token` to obtain the refresh token and DELETE `api/account/{userId}/refresh-tokens` (this one needs auth) under `AccountController`
+* Tests need to be fixed or use existing `db-meetup:latest` docker image
 
 ## Swagger
 

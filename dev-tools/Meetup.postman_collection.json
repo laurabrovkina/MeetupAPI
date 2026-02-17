@@ -1,0 +1,276 @@
+{
+  "info": {
+    "_postman_id": "5e47127c-92c9-417c-afb9-33b14d8ff551",
+    "name": "Meetup",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7134213"
+  },
+  "item": [
+    {
+      "name": "https://localhost:5001/api/meetup",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrQHlvdXR1YmUuY29tIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiTmF0aW9uYWxpdHkiOiJBcmdlbnRpbmlhbiIsImV4cCI6MTc3OTU4Nzk4MywiaXNzIjoiaHR0cDovL21lZXR1cGFwaS5jb20iLCJhdWQiOiJodHRwOi8vbWVldHVwYXBpLmNvbSJ9.0MA3lEVI78SubJ-otaHXsNVM_VNkV2XJqx0F3vlQSYA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"MediatR\",\r\n  \"organizer\": \"Nick Chapsas\",\r\n  \"date\": \"2024-08-04T01:56:15.649Z\",\r\n  \"isPrivate\": false\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/meetup",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "meetup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://localhost:5001/api/meetup/{meetupName}/lecture",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrQHlvdXR1YmUuY29tIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiTmF0aW9uYWxpdHkiOiJBcmdlbnRpbmlhbiIsImV4cCI6MTc3OTU4Nzk4MywiaXNzIjoiaHR0cDovL21lZXR1cGFwaS5jb20iLCJhdWQiOiJodHRwOi8vbWVldHVwYXBpLmNvbSJ9.0MA3lEVI78SubJ-otaHXsNVM_VNkV2XJqx0F3vlQSYA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"author\": \"Nick Chapsas\",\r\n  \"topic\": \"MediatR\",\r\n  \"description\": \"Getting Started with MediatR and Vertical Slices in .NET\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/meetup/MediatR/lecture",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "meetup",
+            "MediatR",
+            "lecture"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://localhost:5001/api/account/register",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrQHlvdXR1YmUuY29tIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiTmF0aW9uYWxpdHkiOiJBcmdlbnRpbmlhbiIsImV4cCI6MTc3OTU4Nzk4MywiaXNzIjoiaHR0cDovL21lZXR1cGFwaS5jb20iLCJhdWQiOiJodHRwOi8vbWVldHVwYXBpLmNvbSJ9.0MA3lEVI78SubJ-otaHXsNVM_VNkV2XJqx0F3vlQSYA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nationality\": \"Greek\",\r\n  \"dateOfBirth\": \"2023-08-04T01:57:47.741Z\",\r\n  \"roleId\": 3,\r\n  \"email\": \"nickthegreek@youtube.com\",\r\n  \"password\": \"string123\",\r\n  \"confirmPassword\": \"string123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/account/register",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "account",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://localhost:5001/api/account/login",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrQHlvdXR1YmUuY29tIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiTmF0aW9uYWxpdHkiOiJBcmdlbnRpbmlhbiIsImV4cCI6MTc3OTU4Nzk4MywiaXNzIjoiaHR0cDovL21lZXR1cGFwaS5jb20iLCJhdWQiOiJodHRwOi8vbWVldHVwYXBpLmNvbSJ9.0MA3lEVI78SubJ-otaHXsNVM_VNkV2XJqx0F3vlQSYA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nationality\": \"Argentinian\",\r\n  \"dateOfBirth\": \"2023-08-04T01:57:47.741Z\",\r\n  \"roleId\": 3,\r\n  \"email\": \"nick@youtube.com\",\r\n  \"password\": \"string123\",\r\n  \"confirmPassword\": \"string123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/account/login",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "account",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST https://localhost:5001/api/meetup/MediatR/lecture",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrQHlvdXR1YmUuY29tIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiTmF0aW9uYWxpdHkiOiJBcmdlbnRpbmlhbiIsImV4cCI6MTc3OTU4Nzk4MywiaXNzIjoiaHR0cDovL21lZXR1cGFwaS5jb20iLCJhdWQiOiJodHRwOi8vbWVldHVwYXBpLmNvbSJ9.0MA3lEVI78SubJ-otaHXsNVM_VNkV2XJqx0F3vlQSYA",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"author\": \"Nick Chapsas\",\r\n  \"topic\": \"Facets\",\r\n  \"description\": \"New way of mapping things\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/meetup/MediatR/lecture",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "meetup",
+            "MediatR",
+            "lecture"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://localhost:5001/api/account/refresh-token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"refreshToken\": \"rHhdD38nZBNDP/p1BPFdYZWGp9PwdeV7XRathQDupCI=\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:5001/api/account/refresh-token",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "account",
+            "refresh-token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://localhost:5001/api/account/refresh-token",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJuaWNrdGhlZ3JlZWtAeW91dHViZS5jb20iLCJOYXRpb25hbGl0eSI6IkdyZWVrIiwiRGF0ZU9mQmlydGgiOiIwNC0wOC0yMDIzIiwiZXhwIjoxNzcxMjgzMTQ3LCJpc3MiOiJodHRwOi8vbWVldHVwYXBpLmNvbSIsImF1ZCI6Imh0dHA6Ly9tZWV0dXBhcGkuY29tIn0.RYKwRfpnv7N91Yg4p7I1C-HLLT4ywxYe09e96NRiG7A",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:5001/api/account/1/refresh-tokens",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "5001",
+          "path": [
+            "api",
+            "account",
+            "1",
+            "refresh-tokens"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
