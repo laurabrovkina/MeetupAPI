@@ -1,0 +1,39 @@
+﻿name: Deploy Application with EF Migration
+
+on:
+  push:
+# branches: [main]
+
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore MeetupAPI.sln
+        
+      - name: Build
+        run: dotnet build MeetupAPI.sln --configuration Release --no-rewtore -o ${{env.DOTNET_ROOT}}
+        
+      - name: Create EF Migrations
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations bundle --project MeetupAPI/MeetupAPI.csproj --output efbundle
+          
+      - name: Run EF Migrations
+        run: ./efbundle --connection "${{secrets.DB_CONNECTION_STRING}}"
+        
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: MeetupApi
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZURE_MEETUP_API_PUBLISH_PROFILE }}
+          package: ${{env.DOTNET_ROOT}}/myapp

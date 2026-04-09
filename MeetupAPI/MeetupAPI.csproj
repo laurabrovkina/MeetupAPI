@@ -57,6 +57,7 @@
         <Content Update="nlog.config">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <Content Include=".github\workflows\efmigration.yaml" />
     </ItemGroup>
 
     <ItemGroup>

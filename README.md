@@ -36,7 +36,12 @@ dotnet ef database update --context MeetupContext
 ```
 * Note: for some reason it started to complain about multiple db contexts that is wgy `--context` key is used
 * The data seeder got fixed, now it is adding `Roles` if they don't exist in DB and also add some test meetups
-
+* Also, we could extract existing db using command:
+```bash
+          dotnet ef migrations script --project MeetupAPI/MeetupAPI.csproj --output migrations.sql --idempotent
+```
+* `--idempotent` makes sure that migration would be run without exceptions
+* `script` won't have any seeding data compare to `bundle`
 ## Enabling Central Package Management
 
 Considering that the solution has several projects, it is easier to have a Central Package Management.
