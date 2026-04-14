@@ -122,7 +122,7 @@ It creates `\.config\dotnet-tools.json` file with settings:
   "isRoot": true,
   "tools": {
     "swashbuckle.aspnetcore.cli": {
-      "version": "6.6.2",
+      "version": "8.1.1",
       "commands": [
         "swagger"
       ],
