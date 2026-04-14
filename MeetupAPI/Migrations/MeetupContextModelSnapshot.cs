@@ -17,7 +17,7 @@ namespace Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,7 +46,7 @@ namespace Migrations
 
                     b.HasIndex("MeetupId");
 
-                    b.ToTable("Lectures");
+                    b.ToTable("Lectures", (string)null);
                 });
 
             modelBuilder.Entity("Entities.Location", b =>
@@ -74,7 +74,7 @@ namespace Migrations
                     b.HasIndex("MeetupId")
                         .IsUnique();
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Entities.Meetup", b =>
@@ -102,7 +102,7 @@ namespace Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Meetups");
+                    b.ToTable("Meetups", (string)null);
                 });
 
             modelBuilder.Entity("Entities.RefreshToken", b =>
@@ -129,7 +129,7 @@ namespace Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Entities.Role", b =>
@@ -145,7 +145,7 @@ namespace Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Entities.User", b =>
@@ -181,7 +181,7 @@ namespace Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Entities.Lecture", b =>
