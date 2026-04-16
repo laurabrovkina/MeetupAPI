@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
         <GenerateSwaggerFiles>true</GenerateSwaggerFiles>
         <RootNamespace>$(MSBuildProject)</RootNamespace>
     </PropertyGroup>
@@ -12,6 +13,7 @@
         <PackageReference Include="AspNetCore.HealthChecks.UI"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client"/>
         <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage"/>
+        <PackageReference Include="Bogus" />
         <PackageReference Include="Facet" />
         <PackageReference Include="Facet.Extensions" />
         <PackageReference Include="Facet.Extensions.EFCore" />
@@ -40,7 +42,7 @@
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="NSwag.MSBuild">
             <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <IncludeAssets>none</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Sentry.AspNetCore" />
         <PackageReference Include="Sentry.OpenTelemetry" />
@@ -75,11 +77,11 @@
       <PackageVersion Update="Microsoft.Extensions.Configuration" />
     </ItemGroup>
 
-    <Target Name="SwaggerPostBuildTarget" AfterTargets="PostBuildEvent">
+    <Target Name="SwaggerPostBuildTarget" AfterTargets="PostBuildEvent" Condition="'$(GenerateSwaggerFiles)' == 'true' and '$(NSwagExe_Net90)' != ''" >
         <Exec Command="dotnet tool restore"></Exec>
         <Exec Command="dotnet swagger tofile --yaml --output docs/api.yaml $(TargetPath) v1"/>
     </Target>
-    <Target Name="NSwag" AfterTargets="AfterBuild" Condition=" '$(GenerateSwaggerFiles)' == 'true'">
+    <Target Name="NSwag" AfterTargets="AfterBuild" Condition="'$(GenerateSwaggerFiles)' == 'true' and '$(NSwagExe_Net90)' != ''">
         <Exec Command="$(NSwagExe_Net90) openapi2csclient /input:docs/api.yaml /output:docs/MeetupClient.cs /JsonLibrary:SystemTextJson /classname:{controller}Client /operationGenerationMode:MultipleClientsFromFirstTagAndPathSegments /generateOptionalParameters:true /wrapResponses:true /generateResponseClasses:true /responseClass:Response /exceptionClass:MeetupApiException /useBaseUrl:false /generateClientInterfaces:true /generateOptionalPropertiesAsNullable:true"/>
     </Target>
 
