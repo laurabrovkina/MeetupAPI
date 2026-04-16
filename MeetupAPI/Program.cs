@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Authorization;
+using Bogus;
 using Entities;
 using ErrorHandling;
 using Filters;
@@ -132,7 +136,55 @@ builder.Services.AddSingleton<DomainEventsInterceptor>();
 // but we changed it to use the factory:
 builder.Services.AddDbContextFactory<MeetupContext>(option =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("MeetupDb"));
+    option.UseSqlServer(builder.Configuration.GetConnectionString("MeetupDb"))
+        .UseAsyncSeeding(async (context, _, ct) =>
+        {
+            var roles = new List<Role>
+            {
+                new()
+                {
+                    RoleName = "User"
+                },
+                new()
+                {
+                    RoleName = "Moderator"
+                },
+                new()
+                {
+                    RoleName = "Admin"
+                }
+            };
+            var containsRoles = await context.Set<Role>().ContainsAsync(roles[0]);
+            if (!containsRoles)
+            {
+                context.Set<Role>().AddRange(roles);
+                await context.SaveChangesAsync(ct);
+            }
+        })
+        .UseSeeding((context, _) =>
+        {
+            var roles = new List<Role>
+            {
+                new()
+                {
+                    RoleName = "User"
+                },
+                new()
+                {
+                    RoleName = "Moderator"
+                },
+                new()
+                {
+                    RoleName = "Admin"
+                }
+            };
+            var containsRoles = context.Set<Role>().Contains(roles[0]);
+            if (!containsRoles)
+            {
+                context.Set<Role>().AddRange(roles);
+                context.SaveChanges();
+            }
+        });
 });
 builder.Services.AddScoped<MeetupSeeder>();
 
@@ -190,8 +242,8 @@ app.MapHealthChecks("health/ready", new HealthCheckOptions
     Predicate = check => check.Tags.Contains("ready")
 });
 
-SeedDatabase();
-
+//SeedDatabase();
+    
 app.Run();
 
 void SeedDatabase()
