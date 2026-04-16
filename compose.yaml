@@ -7,3 +7,37 @@
       - ACCEPT_EULA=Y
     ports:
       - "14033:1433"
+    networks:
+      - test
+  db-migration:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    container_name: db-migration
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    volumes:
+      - ./:/src
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /usr/share/dotnet/dotnet tool install --global dotnet-ef --version 9.0.14
+        cd /src/MeetupAPI
+        /usr/share/dotnet/dotnet build MeetupAPI.csproj \
+        --configuration Release /p:GenerateSwaggerFiles=false /p:NSwagExe_Net90="" && \
+        /root/.dotnet/tools/dotnet-ef migrations bundle \
+        --startup-project MeetupAPI.csproj \
+        --context MeetupContext \
+        --output efbundle --force \
+        --self-contained \
+        -r linux-x64 \
+        --no-build --verbose \
+        -- /p:NSwagExe_Net90="" /p:GenerateSwaggerFiles=false && \
+        ./efbundle --connection "Server=meetup-db,1433;Database=MeetupDb;User Id=sa;Password=CorrectHorseBatteryStapleFor$;MultipleActiveResultSets=True;Encrypt=False"
+    depends_on:
+      - "meetup-db"
+    networks:
+      - test
+    
+networks:
+  test:
