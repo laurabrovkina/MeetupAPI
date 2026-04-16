@@ -240,7 +240,7 @@ Adding config to the api:
     });
     //Also setting should be set in .AddOpenTelemetry
     //***********************************************
-    builder.Services.AddOpenTelemetry()
+    builder.Services.AddOpenTelemetry()[seeding example.md.txt](seeding%20example.md.txt)
     .WithMetrics(x =>
     {
         ****
@@ -253,8 +253,11 @@ Adding config to the api:
             .AddGrpcClientInstrumentation()
             .AddHttpClientInstrumentation()
             .AddSentry();
-    });
+    });[seeding example.md.txt](seeding%20example.md.txt)
 ```
+* `ef-bundle-with-deeding` - this branch is with an example how to use ef bundle and apply seeding. Ids should be still fixed for Roles to be specific.
+Also, there is a `seeding example.md` file that still has issues but shows how it needs to be setup
+
 ## Dockerization
 
 * The original idea was found on
