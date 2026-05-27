@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateSwaggerFiles>true</GenerateSwaggerFiles>
+    <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+</Project>
