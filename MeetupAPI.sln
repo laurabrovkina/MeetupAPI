@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		create-database.sql = create-database.sql
 		seeding example.md = seeding example.md
 		Directory.Build.props = Directory.Build.props
+		dotnet-tools.json = dotnet-tools.json
 	EndProjectSection
 EndProject
 Global

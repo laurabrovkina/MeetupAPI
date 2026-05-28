@@ -195,6 +195,7 @@ paths:
           in: query
           schema:
             minimum: 1
+            exclusiveMinimum: false
             type: integer
             format: int32
         - name: SortBy
@@ -391,27 +392,6 @@ components:
         createdBy:
           $ref: '#/components/schemas/User'
       additionalProperties: false
-    MeetupQuery:
-      required:
-        - searchPhrase
-      type: object
-      properties:
-        searchPhrase:
-          minLength: 1
-          type: string
-        pageSize:
-          type: integer
-          format: int32
-        pageNumber:
-          minimum: 1
-          type: integer
-          format: int32
-        sortBy:
-          type: string
-          nullable: true
-        sortDirection:
-          $ref: '#/components/schemas/SortDirection'
-      additionalProperties: false
     MeetupRequest:
       required:
         - name
@@ -451,6 +431,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Lecture'
+          nullable: true
+        domainEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/INotification'
           nullable: true
       additionalProperties: false
     MeetupResponsePagedResult:
@@ -580,3 +565,9 @@ components:
         role:
           $ref: '#/components/schemas/Role'
       additionalProperties: false
+tags:
+  - name: Account
+  - name: Config
+  - name: File
+  - name: Lecture
+  - name: Meetup
